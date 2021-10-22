@@ -2,6 +2,7 @@ import React from 'react'
 import { HStack, Icon, Link, Text } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
 type Props = {
   href: string
@@ -12,6 +13,8 @@ type Props = {
 export const MenuLink = ({ href, label, icon }: Props) => {
   const router = useRouter()
   const isActive = router.pathname === href
+
+  const { t } = useTranslation('common')
 
   return (
     <NextLink href={href} passHref>
@@ -34,7 +37,7 @@ export const MenuLink = ({ href, label, icon }: Props) => {
       >
         <HStack alignItems="center">
           <Icon h={4} w={4} as={icon} />
-          <Text fontSize="md">{label}</Text>
+          <Text fontSize="md">{t(label)}</Text>
         </HStack>
       </Link>
     </NextLink>

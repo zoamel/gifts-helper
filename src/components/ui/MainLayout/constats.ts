@@ -7,17 +7,17 @@ import {
 export const MENU_ITEMS = [
   {
     href: '/wishlist',
-    label: 'My Wishlist',
+    label: 'wishlist',
     icon: ClipboardListIcon,
   },
   {
     href: '/shopping-list',
-    label: 'My Shopping List',
+    label: 'shoppingList',
     icon: ViewListIcon,
   },
   {
     href: '/users-search',
-    label: 'Other Users',
+    label: 'otherUsers',
     icon: SearchIcon,
   },
 ]
