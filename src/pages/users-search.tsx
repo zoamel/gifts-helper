@@ -3,12 +3,12 @@ import { Heading } from '@chakra-ui/react'
 
 import { MainLayout } from '../components/ui'
 
-const Home: NextPage = () => {
+const UsersSearch: NextPage = () => {
   return (
     <MainLayout>
-      <Heading></Heading>
+      <Heading>Users Search</Heading>
     </MainLayout>
   )
 }
 
-export default Home
+export default UsersSearch
