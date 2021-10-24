@@ -65,4 +65,16 @@ model Wishlist {
   updatedAt DateTime
   owner     User     @relation(fields: [ownerId], references: [id])
   ownerId   String
+  items     Item[]
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  url         String?
+  createdAt   DateTime
+  updatedAt   DateTime
+  wishlist    Wishlist @relation(fields: [wishlistId], references: [id])
+  wishlistId  String
 }

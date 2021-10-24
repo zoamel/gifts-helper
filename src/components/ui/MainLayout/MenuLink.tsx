@@ -17,7 +17,7 @@ export const MenuLink = ({ href, label, icon }: Props) => {
   const { t } = useTranslation('common')
 
   return (
-    <NextLink href={`/pl${href}`} passHref>
+    <NextLink href={href} passHref>
       <Link
         mr={2}
         fontSize="sm"
