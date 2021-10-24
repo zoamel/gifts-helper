@@ -23,9 +23,9 @@ export const MainContainer = ({ children }: Props) => {
       <Container
         borderRadius="lg"
         maxWidth="container.xl"
-        bg="gray.200"
+        bg="white"
         height="100%"
-        pb={6}
+        py={4}
       >
         <Flex direction="column" height="full">
           {children}
