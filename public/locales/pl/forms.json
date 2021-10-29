@@ -1,4 +1,6 @@
 {
   "fieldRequired": "Pole wymagane",
-  "newItemSubmit": "Dodaj"
+  "newItemSubmit": "Dodaj",
+  "editItemSubmit": "Zapisz",
+  "editItemCancel": "A"
 }

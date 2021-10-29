@@ -1,8 +1,3 @@
-export const fetcher = async (
-  input: RequestInfo,
-  init: RequestInit,
-  ...args: any[]
-) => {
-  const res = await fetch(input, init)
-  return res.json()
-}
+import axios from 'axios'
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data)

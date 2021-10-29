@@ -1,34 +1,56 @@
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
-  Heading,
   Divider,
-  Skeleton,
   Text,
   Box,
   Progress,
   Container,
   HStack,
+  useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useSession, signIn } from 'next-auth/react'
+import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 
 import { MainLayout } from '../components/ui'
-import { AddNewItem, ItemsList } from '../components/wishlist'
+import {
+  AddNewItem,
+  ItemsList,
+  ItemDetailsModal,
+  DeleteItemConfirmation,
+} from '../components/wishlist'
 import { Wishlist, WishlistItem } from '../models/wishlist'
 
 const WishlistPage: NextPage = () => {
+  const {
+    isOpen: editModalOpened,
+    onOpen: onOpenEditModal,
+    onClose: onCloseEditModal,
+  } = useDisclosure()
+
+  const toast = useToast()
+
+  const { t } = useTranslation(['common', 'wishlist'])
+
+  const deleteRef = useRef(null)
+
   const [wishlistId, setWishlistId] = useState<string | null>(null)
-  const [wishlistTitle, setWishlistTitle] = useState<string | null>(null)
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([])
+  const [selectedItem, setSelectedItem] = useState<WishlistItem | null>(null)
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
+
   const [fetchingInProgress, setFetchingInProgress] = useState<boolean>(true)
   const [addingItemInProgress, setAddingItemInProgress] = useState(false)
-  const [fetchingError, setFetchingError] = useState<string | null>(null)
-  const [selectedItem, setSelectedItem] = useState<WishlistItem | null>(null)
+  const [updatedInProgress, setUpdateInProgress] = useState(false)
+  const [deleteInProgress, setDeleteInProgress] = useState(false)
 
-  const { data: session, status } = useSession({
+  const [fetchingError, setFetchingError] = useState<string | null>(null)
+
+  const { status } = useSession({
     required: true,
     onUnauthenticated() {
       signIn()
@@ -52,7 +74,6 @@ const WishlistPage: NextPage = () => {
         payload
       )
 
-      setWishlistTitle(createdWishlist.name)
       setWishlistId(createdWishlist.id)
       setFetchingInProgress(false)
       setFetchingError(null)
@@ -73,7 +94,6 @@ const WishlistPage: NextPage = () => {
     try {
       const { data } = await axios.get<Wishlist>('/api/wishlist')
 
-      setWishlistTitle(data.name)
       setWishlistItems(data.items)
       setWishlistId(data.id)
       setFetchingInProgress(false)
@@ -108,10 +128,129 @@ const WishlistPage: NextPage = () => {
 
       setWishlistItems(data.items)
       setAddingItemInProgress(false)
+      toast({
+        status: 'success',
+        title: t('wishlist:itemAddSuccessMessage'),
+      })
     } catch (error) {
+      let message = ''
+      if (axios.isAxiosError(error)) {
+        message = error.message
+      } else {
+        message = t('wishlist:requestErrorMessage')
+      }
+
+      toast({
+        status: 'error',
+        title: message,
+      })
+
       setAddingItemInProgress(false)
-      console.error(error)
     }
+  }
+
+  async function handleItemEditSave(item: WishlistItem) {
+    const { id, ...payload } = item
+
+    setUpdateInProgress(true)
+
+    try {
+      const { data } = await axios.patch<WishlistItem>(
+        `/api/items/${id}`,
+        payload
+      )
+
+      setWishlistItems((items) => {
+        const index = items.findIndex((item) => item.id === data.id)
+
+        items[index] = {
+          id: data.id,
+          name: data.name,
+          url: data.url,
+          description: data.description,
+        }
+
+        return items
+      })
+
+      setSelectedItem(null)
+      setUpdateInProgress(false)
+
+      onCloseEditModal()
+
+      toast({
+        status: 'success',
+        title: t('wishlist:itemUpdateSuccessMessage'),
+      })
+    } catch (error) {
+      let message = ''
+
+      if (axios.isAxiosError(error)) {
+        message = error.message
+      } else {
+        message = t('wishlist:requestErrorMessage')
+      }
+
+      toast({
+        status: 'error',
+        title: message,
+      })
+
+      setUpdateInProgress(false)
+    }
+  }
+
+  async function handleItemDelete() {
+    if (!selectedItem) {
+      return
+    }
+
+    const { id } = selectedItem
+
+    setDeleteInProgress(true)
+
+    try {
+      await axios.delete(`/api/items/${id}`)
+
+      setWishlistItems((items) => items.filter((item) => item.id !== id))
+
+      setSelectedItem(null)
+      setDeleteInProgress(false)
+      setIsConfirmDeleteOpen(false)
+
+      toast({
+        status: 'info',
+        title: t('wishlist:itemDeleteSuccessMessage'),
+      })
+    } catch (error) {
+      let message = ''
+
+      if (axios.isAxiosError(error)) {
+        message = error.message
+      } else {
+        message = t('wishlist:requestErrorMessage')
+      }
+
+      setIsConfirmDeleteOpen(false)
+
+      toast({
+        status: 'error',
+        title: message,
+      })
+
+      setSelectedItem(null)
+      setDeleteInProgress(false)
+    }
+  }
+
+  const onInitializeDeleteItem = (item: WishlistItem) => {
+    setSelectedItem(item)
+    setIsConfirmDeleteOpen(true)
+  }
+
+  const onCancelDeleteItem = () => {
+    setSelectedItem(null)
+    setIsConfirmDeleteOpen(false)
   }
 
   if (fetchingError) {
@@ -125,30 +264,58 @@ const WishlistPage: NextPage = () => {
   }
 
   return (
-    <MainLayout>
-      <HStack spacing={4} minHeight="full" alignItems="stretch">
-        <Container borderRadius="lg" maxWidth="container.lg" bg="white" py={4}>
-          <AddNewItem
-            requestInProgress={fetchingInProgress === true}
-            onAddNewItem={(item) => handleAddNewItem(item)}
-          />
-
-          <Box>
-            <Divider colorScheme="red" my={6} />
-
-            {fetchingInProgress && (
-              <Progress isIndeterminate size="xs" my={2} />
-            )}
-
-            <ItemsList
-              items={wishlistItems}
-              addingInProgress={addingItemInProgress}
-              onSelectItem={(item) => setSelectedItem(item)}
+    <>
+      <MainLayout>
+        <HStack spacing={4} minHeight="full" alignItems="stretch">
+          <Container
+            borderRadius="lg"
+            maxWidth="container.lg"
+            bg="white"
+            py={4}
+          >
+            <AddNewItem
+              requestInProgress={fetchingInProgress === true}
+              onAddNewItem={(item) => handleAddNewItem(item)}
             />
-          </Box>
-        </Container>
-      </HStack>
-    </MainLayout>
+
+            <Box>
+              <Divider colorScheme="red" my={6} />
+
+              {fetchingInProgress && deleteInProgress && (
+                <Progress isIndeterminate colorScheme="teal" size="xs" my={2} />
+              )}
+
+              {!fetchingInProgress && (
+                <ItemsList
+                  items={wishlistItems}
+                  addingInProgress={addingItemInProgress}
+                  onSelectItem={(item) => {
+                    setSelectedItem(item)
+                    onOpenEditModal()
+                  }}
+                  onDeleteItem={onInitializeDeleteItem}
+                />
+              )}
+            </Box>
+          </Container>
+        </HStack>
+      </MainLayout>
+
+      <DeleteItemConfirmation
+        ref={deleteRef}
+        onCancel={onCancelDeleteItem}
+        onConfirm={handleItemDelete}
+        isOpened={isConfirmDeleteOpen}
+      />
+
+      <ItemDetailsModal
+        isOpened={editModalOpened}
+        saveInProgress={updatedInProgress}
+        onClose={onCloseEditModal}
+        onSave={handleItemEditSave}
+        item={selectedItem}
+      />
+    </>
   )
 }
 

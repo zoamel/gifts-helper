@@ -61,8 +61,8 @@ model VerificationToken {
 model Wishlist {
   id        String   @id @default(cuid())
   name      String
-  createdAt DateTime
-  updatedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   owner     User     @relation(fields: [ownerId], references: [id])
   ownerId   String
   items     Item[]
@@ -73,8 +73,8 @@ model Item {
   name        String
   description String?
   url         String?
-  createdAt   DateTime
-  updatedAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   wishlist    Wishlist @relation(fields: [wishlistId], references: [id])
   wishlistId  String
 }

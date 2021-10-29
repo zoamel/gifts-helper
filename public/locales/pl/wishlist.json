@@ -1,4 +1,15 @@
 {
   "newItemLabel": "Dodaj nowy przedmiot",
-  "newItemPlaceholder": "Przykładowo: Klocki Lego"
+  "newItemPlaceholder": "Przykładowo: Klocki Lego",
+  "itemEditLabel": "Edytuj",
+  "itemEditModalTitle": "Edycja przedmiotu",
+  "itemDescriptionPlaceholder": "Dodatkowe informacje na temat przedmiotu (opcjonalne)",
+  "itemURLPlaceholder": "Link do przedmiotu (opcjonalne)",
+  "itemAddSuccessMessage": "Dodano przedmiot",
+  "itemUpdateSuccessMessage": "Zaktualizowano przedmiot",
+  "itemDeleteSuccessMessage": "Usunięto przedmiot",
+  "requestErrorMessage": "Operacja nieuadana",
+  "deleteItemButtonLabel": "Usuń przedmiot",
+  "deleteConfirmationTitle": "Usuwanie Przedmiotu",
+  "deleteConfirmationDescription": "Czy na pewno chcesz usunąć ten przedmiot z Twojej listy?"
 }

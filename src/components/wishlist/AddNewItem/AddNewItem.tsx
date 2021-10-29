@@ -30,6 +30,7 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
     handleSubmit,
     register,
     formState: { errors },
+    reset,
   } = useForm<FormInputs>()
 
   const onSubmit: SubmitHandler<FormInputs> = (data) => {
@@ -38,6 +39,7 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
     }
 
     onAddNewItem(payload)
+    reset()
   }
 
   return (

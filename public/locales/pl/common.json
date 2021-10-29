@@ -2,5 +2,12 @@
   "appName": "Pomocnik Prezentowy",
   "wishlist": "Lista Życzeń",
   "shoppingList": "Lista Zakupów",
-  "otherUsers": "Inni użytkownicy"
+  "otherUsers": "Inni użytkownicy",
+  "itemName": "Nazwa przedmiotu",
+  "itemDescription": "Dodatkowy opis przedmiotu",
+  "itemURL": "Link do przedmiotu",
+  "save": "Zapisz",
+  "close": "Zamknij",
+  "cancelAndClose": "Anuluj i zamknij",
+  "delete": "Skasuj"
 }
