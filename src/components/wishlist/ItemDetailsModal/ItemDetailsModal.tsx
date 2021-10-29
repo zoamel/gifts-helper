@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { WishlistItem } from '../../../models/wishlist'
+import { useEffect } from 'react'
 
 type Props = {
   item: WishlistItem | null
@@ -42,14 +43,19 @@ export const ItemDetailsModal = ({
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors },
-  } = useForm<FormInputs>({
-    defaultValues: {
-      name: item?.name ?? '',
-      description: item?.description ?? '',
-      url: item?.url ?? '',
-    },
-  })
+  } = useForm<FormInputs>()
+
+  useEffect(() => {
+    if (item) {
+      reset({
+        name: item.name,
+        description: item.description,
+        url: item.url,
+      })
+    }
+  }, [item])
 
   const onSubmit: SubmitHandler<FormInputs> = (values) => {
     const payload: WishlistItem = {

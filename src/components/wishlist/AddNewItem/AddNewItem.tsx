@@ -44,7 +44,10 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
 
   return (
     <chakra.form onSubmit={handleSubmit(onSubmit)} width="full" noValidate>
-      <HStack spacing={2} alignItems="flex-end">
+      <HStack
+        spacing={2}
+        alignItems={!!errors.itemName ? 'center' : 'flex-end'}
+      >
         <FormControl
           id="new-item-name"
           isInvalid={!!errors.itemName}
