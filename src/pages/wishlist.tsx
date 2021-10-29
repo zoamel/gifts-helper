@@ -1,6 +1,15 @@
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-import { Heading, Divider, Skeleton, Text, Box } from '@chakra-ui/react'
+import {
+  Heading,
+  Divider,
+  Skeleton,
+  Text,
+  Box,
+  Progress,
+  Container,
+  HStack,
+} from '@chakra-ui/react'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useSession, signIn } from 'next-auth/react'
@@ -17,8 +26,9 @@ const WishlistPage: NextPage = () => {
   const [fetchingInProgress, setFetchingInProgress] = useState<boolean>(true)
   const [addingItemInProgress, setAddingItemInProgress] = useState(false)
   const [fetchingError, setFetchingError] = useState<string | null>(null)
+  const [selectedItem, setSelectedItem] = useState<WishlistItem | null>(null)
 
-  const { data: session } = useSession({
+  const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
       signIn()
@@ -26,10 +36,10 @@ const WishlistPage: NextPage = () => {
   })
 
   useEffect(() => {
-    if (session?.user) {
+    if (status === 'authenticated') {
       fetchWishlist()
     }
-  }, [session])
+  }, [status])
 
   async function createDefaultWishlist() {
     try {
@@ -116,26 +126,28 @@ const WishlistPage: NextPage = () => {
 
   return (
     <MainLayout>
-      <Skeleton isLoaded={fetchingInProgress === false}>
-        <Heading size="lg" color="blackAlpha.600">
-          {wishlistTitle}
-        </Heading>
-      </Skeleton>
-
-      {wishlistId && (
-        <AddNewItem onAddNewItem={(item) => handleAddNewItem(item)} />
-      )}
-
-      <Divider colorScheme="red" my={6} />
-
-      <Box>
-        <Skeleton isLoaded={fetchingInProgress === false}>
-          <ItemsList
-            items={wishlistItems}
-            addingInProgress={addingItemInProgress}
+      <HStack spacing={4} minHeight="full" alignItems="stretch">
+        <Container borderRadius="lg" maxWidth="container.lg" bg="white" py={4}>
+          <AddNewItem
+            requestInProgress={fetchingInProgress === true}
+            onAddNewItem={(item) => handleAddNewItem(item)}
           />
-        </Skeleton>
-      </Box>
+
+          <Box>
+            <Divider colorScheme="red" my={6} />
+
+            {fetchingInProgress && (
+              <Progress isIndeterminate size="xs" my={2} />
+            )}
+
+            <ItemsList
+              items={wishlistItems}
+              addingInProgress={addingItemInProgress}
+              onSelectItem={(item) => setSelectedItem(item)}
+            />
+          </Box>
+        </Container>
+      </HStack>
     </MainLayout>
   )
 }

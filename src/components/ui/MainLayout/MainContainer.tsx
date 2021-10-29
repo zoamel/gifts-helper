@@ -20,17 +20,7 @@ export const MainContainer = ({ children }: Props) => {
         marginInlineStart: 'var(--sidebar-width)',
       }}
     >
-      <Container
-        borderRadius="lg"
-        maxWidth="container.xl"
-        bg="white"
-        height="100%"
-        py={4}
-      >
-        <Flex direction="column" height="full">
-          {children}
-        </Flex>
-      </Container>
+      {children}
     </Box>
   )
 }
