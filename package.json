@@ -22,7 +22,7 @@
     "axios": "^0.23.0",
     "focus-visible": "^5.2.0",
     "framer-motion": "^4",
-    "next": "11.1.2",
+    "next": "12.0.1",
     "next-auth": "^4.0.0-beta.4",
     "next-i18next": "^8.9.0",
     "react": "17.0.2",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/react": "17.0.31",
     "eslint": "^8.1.0",
-    "eslint-config-next": "11.1.2",
+    "eslint-config-next": "12.0.1",
     "prettier": "^2.4.1",
     "prisma": "^3.3.0",
     "typescript": "4.4.4"
