@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { NextPage } from 'next'
-import { Heading, Box, Text } from '@chakra-ui/react'
+import { Box, Text } from '@chakra-ui/react'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
@@ -12,6 +12,7 @@ import { User } from '../models/users'
 
 const UsersSearch: NextPage = () => {
   const { t } = useTranslation()
+
   const [fetchingUsers, setFetchingUsers] = useState(false)
   const [foundUsers, setFoundUsers] = useState<User[]>([])
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -40,8 +41,6 @@ const UsersSearch: NextPage = () => {
 
   return (
     <MainLayout>
-      <Heading>Users Search</Heading>
-
       <UsersSearchForm
         onSearch={searchForUsers}
         requestInProgress={fetchingUsers}

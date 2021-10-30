@@ -1,11 +1,7 @@
 import React from 'react'
-import { HStack } from '@chakra-ui/react'
+import { HStack, StackProps } from '@chakra-ui/react'
 
-type Props = {
-  children: React.ReactNode
-}
-
-export const ListItem = ({ children }: Props) => {
+export const ListItem = ({ children, ...props }: StackProps) => {
   return (
     <HStack
       as="li"
@@ -20,6 +16,7 @@ export const ListItem = ({ children }: Props) => {
       alignItems="flex-end"
       justifyContent="space-between"
       spacing={6}
+      {...props}
     >
       {children}
     </HStack>

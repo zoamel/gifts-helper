@@ -1,5 +1,6 @@
 {
   "searchFieldLabel": "Szukaj użytkowników",
   "searchFieldPlaceholder": "Imię i Nazwisko lub email",
-  "search": "Szukaj"
+  "search": "Szukaj",
+  "visitProfile": "Zobacz profil"
 }

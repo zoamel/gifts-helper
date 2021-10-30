@@ -10,11 +10,11 @@ export const MENU_ITEMS = [
     label: 'wishlist',
     icon: ClipboardListIcon,
   },
-  {
-    href: '/shopping-list',
-    label: 'NIE WCHODZIĆ',
-    icon: ViewListIcon,
-  },
+  // {
+  //   href: '/shopping-list',
+  //   label: 'NIE WCHODZIĆ',
+  //   icon: ViewListIcon,
+  // },
   {
     href: '/users-search',
     label: 'otherUsers',
