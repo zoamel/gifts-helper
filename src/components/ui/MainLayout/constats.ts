@@ -20,4 +20,9 @@ export const MENU_ITEMS = [
     label: 'otherUsers',
     icon: SearchIcon,
   },
+  {
+    href: '/following',
+    label: 'followedUsers',
+    icon: ViewListIcon,
+  },
 ]

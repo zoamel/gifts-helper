@@ -34,7 +34,5 @@ export default async function handle(
     },
   })
 
-  console.log(foundUsers)
-
   res.send(foundUsers)
 }

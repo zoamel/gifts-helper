@@ -10,5 +10,9 @@
   "close": "Zamknij",
   "cancelAndClose": "Anuluj i zamknij",
   "delete": "Skasuj",
-  "comingSoon": "Sekcja będzie dostępna w kolejnej wersji"
+  "comingSoon": "Sekcja będzie dostępna w kolejnej wersji",
+  "followedUsers": "Obserwowani",
+  "addToFollowed": "Dodaj do obserwowanych",
+  "stopFollowing": "Przestań obsersować",
+  "logout": "Wyloguj się"
 }

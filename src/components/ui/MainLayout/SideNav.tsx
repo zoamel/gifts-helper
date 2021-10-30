@@ -1,11 +1,15 @@
 import React from 'react'
-import { Box, VStack } from '@chakra-ui/react'
+import { Box, VStack, Button } from '@chakra-ui/react'
+import { signOut } from 'next-auth/react'
+import { useTranslation } from 'react-i18next'
 
 import { MENU_ITEMS } from './constats'
 import { MenuLink } from './MenuLink'
 import { AppLogo } from './AppLogo'
 
 export const SideNav = () => {
+  const { t } = useTranslation('common')
+
   return (
     <Box
       display="block"
@@ -41,6 +45,19 @@ export const SideNav = () => {
           ))}
         </VStack>
       </Box>
+
+      <Box flex={1} />
+
+      <Button
+        width="full"
+        variant="outline"
+        colorScheme="white"
+        onClick={() => {
+          signOut()
+        }}
+      >
+        {t('logout')}
+      </Button>
     </Box>
   )
 }

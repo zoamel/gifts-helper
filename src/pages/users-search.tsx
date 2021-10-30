@@ -5,12 +5,20 @@ import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 
 import { MainLayout } from '../components/ui'
 import { UsersSearchForm, UsersList } from '../components/users-search'
 import { User } from '../models/users'
 
 const UsersSearch: NextPage = () => {
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      signIn()
+    },
+  })
+
   const { t } = useTranslation()
 
   const [fetchingUsers, setFetchingUsers] = useState(false)

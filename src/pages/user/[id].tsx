@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Heading,
   Box,
@@ -11,29 +12,38 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbSeparator,
-  Divider,
+  Button,
 } from '@chakra-ui/react'
-import { GetStaticProps } from 'next'
+import { GetServerSideProps, GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
+import { useSession, getSession } from 'next-auth/react'
 import Image from 'next/image'
 import NextLink from 'next/link'
+import { LinkIcon } from '@heroicons/react/outline'
+import axios from 'axios'
 
 import giftImage from '../../../public/images/giftbox.png'
 import { MainLayout, ListContainer, ListItem } from '../../components/ui'
 import { User } from '../../models/users'
 import prisma from '../../lib/prisma'
-import { LinkIcon } from '@heroicons/react/outline'
 
 type Props = {
   user: User
+  currentUserId: string | null
 }
 
-const User = ({ user }: Props) => {
+const User = ({ user, currentUserId }: Props) => {
   const { t } = useTranslation(['common'])
 
-  if (!user) {
+  const { data: authUser, status } = useSession({
+    required: true,
+  })
+
+  const [requestInProgress, setRequestInProgress] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<User>(user)
+
+  if (!selectedUser) {
     return (
       <MainLayout>
         <Text color="red" size="lg">
@@ -41,6 +51,36 @@ const User = ({ user }: Props) => {
         </Text>
       </MainLayout>
     )
+  }
+
+  const isAlreadyFollowing = !!selectedUser.followers?.find(
+    (item) => item.followerId === currentUserId
+  )
+
+  const toggleFollow = async () => {
+    if (isAlreadyFollowing) {
+    } else {
+      setRequestInProgress(true)
+      try {
+        const { data } = await axios.post<{
+          followerId: string
+          followingId: string
+        }>('/api/following/create', {
+          userToFollowId: selectedUser.id,
+        })
+
+        setSelectedUser((prevState) => {
+          return {
+            ...prevState,
+            followers: [...prevState.followers, data],
+          }
+        })
+        setRequestInProgress(false)
+      } catch (error) {
+        setRequestInProgress(false)
+        console.error(error)
+      }
+    }
   }
 
   return (
@@ -53,18 +93,33 @@ const User = ({ user }: Props) => {
             </NextLink>
           </BreadcrumbItem>
           <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink>{user.name}</BreadcrumbLink>
+            <BreadcrumbLink>{selectedUser.name}</BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
       </Box>
-      <HStack alignItems="center">
-        <Avatar name={user.name} src={user.image} />
-        <Heading>{user.name}</Heading>
+
+      <HStack alignItems="center" spacing={3}>
+        <Avatar name={selectedUser.name} src={selectedUser.image} />
+        <Heading>{selectedUser.name}</Heading>
+        <Box flex={1} />
+        {status === 'authenticated' && (
+          <Button
+            variant="outline"
+            colorScheme="teal"
+            onClick={toggleFollow}
+            disabled={isAlreadyFollowing}
+            isLoading={requestInProgress}
+          >
+            {isAlreadyFollowing
+              ? t('common:stopFollowing')
+              : t('common:addToFollowed')}
+          </Button>
+        )}
       </HStack>
 
       <Box mt={8}>
         <ListContainer>
-          {user.wishlists[0]?.items.map((item) => (
+          {selectedUser.wishlists[0]?.items.map((item) => (
             <ListItem key={item.id}>
               <VStack alignItems="flex-start">
                 <HStack alignItems="center" spacing={2}>
@@ -83,7 +138,7 @@ const User = ({ user }: Props) => {
                 {item.url && (
                   <Link href={item.url} isExternal>
                     <IconButton
-                      aria-label={t('wishlist:urlButtonLabel')}
+                      aria-label="link to user"
                       colorScheme="blue"
                       variant="outline"
                       size="sm"
@@ -100,25 +155,22 @@ const User = ({ user }: Props) => {
   )
 }
 
-export async function getStaticPaths() {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-    },
-  })
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context)
+  const userId = context.params?.id
 
-  const paths = users.map((user) => ({
-    params: { id: user.id },
-  }))
+  let currentUserId: string | null = null
 
-  return {
-    paths,
-    fallback: false,
+  if (session?.user) {
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email! },
+      select: {
+        id: true,
+      },
+    })
+
+    currentUserId = currentUser?.id ?? null
   }
-}
-
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-  const userId = params?.id
 
   let foundUser = null
 
@@ -142,6 +194,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
             },
           },
         },
+        followers: true,
       },
     })
   }
@@ -149,7 +202,8 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   return {
     props: {
       user: foundUser,
-      ...(await serverSideTranslations(locale ?? 'pl', [
+      currentUserId,
+      ...(await serverSideTranslations(context.locale ?? 'pl', [
         'common',
         'forms',
         'users-search',
