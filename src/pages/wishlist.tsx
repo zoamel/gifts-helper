@@ -61,6 +61,7 @@ const WishlistPage: NextPage = () => {
     if (status === 'authenticated') {
       fetchWishlist()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status])
 
   async function createDefaultWishlist() {

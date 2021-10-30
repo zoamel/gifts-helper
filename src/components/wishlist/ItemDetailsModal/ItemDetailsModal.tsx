@@ -55,7 +55,7 @@ export const ItemDetailsModal = ({
         url: item.url,
       })
     }
-  }, [item])
+  }, [item, reset])
 
   const onSubmit: SubmitHandler<FormInputs> = (values) => {
     const payload: WishlistItem = {
