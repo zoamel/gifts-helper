@@ -266,39 +266,30 @@ const WishlistPage: NextPage = () => {
   return (
     <>
       <MainLayout>
-        <HStack spacing={4} minHeight="full" alignItems="stretch">
-          <Container
-            borderRadius="lg"
-            maxWidth="container.lg"
-            bg="white"
-            py={4}
-          >
-            <AddNewItem
-              requestInProgress={fetchingInProgress === true}
-              onAddNewItem={(item) => handleAddNewItem(item)}
+        <AddNewItem
+          requestInProgress={fetchingInProgress === true}
+          onAddNewItem={(item) => handleAddNewItem(item)}
+        />
+
+        <Box>
+          <Divider colorScheme="red" my={6} />
+
+          {fetchingInProgress && (
+            <Progress isIndeterminate colorScheme="teal" size="xs" my={2} />
+          )}
+
+          {!fetchingInProgress && (
+            <ItemsList
+              items={wishlistItems}
+              addingInProgress={addingItemInProgress}
+              onSelectItem={(item) => {
+                setSelectedItem(item)
+                onOpenEditModal()
+              }}
+              onDeleteItem={onInitializeDeleteItem}
             />
-
-            <Box>
-              <Divider colorScheme="red" my={6} />
-
-              {fetchingInProgress && deleteInProgress && (
-                <Progress isIndeterminate colorScheme="teal" size="xs" my={2} />
-              )}
-
-              {!fetchingInProgress && (
-                <ItemsList
-                  items={wishlistItems}
-                  addingInProgress={addingItemInProgress}
-                  onSelectItem={(item) => {
-                    setSelectedItem(item)
-                    onOpenEditModal()
-                  }}
-                  onDeleteItem={onInitializeDeleteItem}
-                />
-              )}
-            </Box>
-          </Container>
-        </HStack>
+          )}
+        </Box>
       </MainLayout>
 
       <DeleteItemConfirmation

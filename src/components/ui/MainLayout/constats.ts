@@ -12,7 +12,7 @@ export const MENU_ITEMS = [
   },
   {
     href: '/shopping-list',
-    label: 'shoppingList',
+    label: 'NIE WCHODZIĆ',
     icon: ViewListIcon,
   },
   {

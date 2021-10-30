@@ -54,7 +54,7 @@ export const ItemsList = ({
         >
           <VStack alignItems="flex-start">
             <HStack alignItems="center" spacing={2}>
-              <Image src={giftImage} width={20} height={20} />
+              <Image src={giftImage} width={20} height={20} alt="present" />
               <Text fontSize="xl">{item.name}</Text>
             </HStack>
 

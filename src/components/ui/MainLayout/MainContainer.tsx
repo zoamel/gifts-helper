@@ -20,7 +20,15 @@ export const MainContainer = ({ children }: Props) => {
         marginInlineStart: 'var(--sidebar-width)',
       }}
     >
-      {children}
+      <Container
+        minHeight="full"
+        borderRadius="lg"
+        maxWidth="container.lg"
+        bg="white"
+        py={4}
+      >
+        {children}
+      </Container>
     </Box>
   )
 }
