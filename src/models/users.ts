@@ -6,8 +6,4 @@ export type User = {
   email: string
   image: string
   wishlists: Wishlist[]
-  followers: Array<{
-    followerId: string
-    followingId: string
-  }>
 }

@@ -9,23 +9,30 @@ export default async function handle(
 ) {
   const session = await getSession({ req })
 
-  if (!session?.user) {
+  if (!session) {
     res.status(401)
   }
 
   if (req.method === 'GET') {
-    const user = await prisma.user.findUnique({
+    const { id } = req.query
+
+    const userId = typeof id === 'string' ? id : id[0]
+
+    const foundUser = await prisma.user.findUnique({
       where: {
-        email: session?.user?.email!,
+        id: userId as string,
       },
-      select: {
-        following: {
+      include: {
+        wishlists: {
           select: {
-            following: {
+            id: true,
+            name: true,
+            items: {
               select: {
                 id: true,
-                image: true,
                 name: true,
+                description: true,
+                url: true,
               },
             },
           },
@@ -33,6 +40,10 @@ export default async function handle(
       },
     })
 
-    res.send(user?.following)
+    if (!foundUser) {
+      return res.status(404).send({ error: 'User Not Found' })
+    }
+
+    res.send(foundUser)
   }
 }

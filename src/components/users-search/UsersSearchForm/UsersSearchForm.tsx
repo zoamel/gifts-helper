@@ -47,6 +47,7 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
         >
           <FormLabel>{t('users-search:searchFieldLabel')}</FormLabel>
           <Input
+            autoComplete="autocomplete"
             size="lg"
             borderColor="teal.600"
             focusBorderColor="teal.700"
