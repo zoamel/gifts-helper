@@ -14,7 +14,7 @@ import {
   BreadcrumbLink,
   Progress,
 } from '@chakra-ui/react'
-import { GetServerSideProps, GetStaticProps } from 'next'
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import { useSession, getSession } from 'next-auth/react'
@@ -27,34 +27,25 @@ import axios from 'axios'
 import giftImage from '../../../public/images/giftbox.png'
 import { MainLayout, ListContainer, ListItem } from '../../components/ui'
 import { User } from '../../models/users'
+import prisma from '../../lib/prisma'
 
-const User = () => {
+type Props = {
+  user: User | null
+}
+
+const User = ({ user }: Props) => {
   const router = useRouter()
   const { id } = router.query
 
   const { t } = useTranslation(['common'])
 
-  const { data: authUser, status } = useSession({
-    required: true,
-  })
-
-  const [requestInProgress, setRequestInProgress] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-
-  useEffect(() => {
-    setRequestInProgress(true)
-
-    axios
-      .get<User>(`/api/users/${id}`)
-      .then(({ data }) => {
-        setSelectedUser(data)
-        setRequestInProgress(false)
-      })
-      .catch((error) => {
-        console.error(error)
-        setRequestInProgress(false)
-      })
-  }, [id])
+  if (router.isFallback) {
+    return (
+      <MainLayout>
+        <Progress isIndeterminate colorScheme="teal" size="xs" />
+      </MainLayout>
+    )
+  }
 
   return (
     <MainLayout>
@@ -66,26 +57,22 @@ const User = () => {
             </NextLink>
           </BreadcrumbItem>
           <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink>{selectedUser?.name}</BreadcrumbLink>
+            <BreadcrumbLink>{user?.name}</BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
       </Box>
 
-      {requestInProgress && (
-        <Progress isIndeterminate colorScheme="teal" size="xs" />
-      )}
-
-      {selectedUser && (
+      {user && (
         <>
           <HStack alignItems="center" spacing={3}>
-            <Avatar name={selectedUser.name} src={selectedUser.image} />
-            <Heading>{selectedUser.name}</Heading>
+            <Avatar name={user.name} src={user.image} />
+            <Heading>{user.name}</Heading>
             <Box flex={1} />
           </HStack>
 
           <Box mt={8}>
             <ListContainer>
-              {selectedUser.wishlists[0]?.items.map((item) => (
+              {user.wishlists[0]?.items.map((item) => (
                 <ListItem key={item.id}>
                   <VStack alignItems="flex-start">
                     <HStack alignItems="center" spacing={2}>
@@ -128,15 +115,58 @@ const User = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const users = await prisma.user.findMany({})
+
+  const paths = users.map((user) => ({
+    params: { id: user.id },
+  }))
+
+  return {
+    paths,
+    fallback: true,
+  }
+}
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const userId = context.params?.id as string | null
+
+  let user = null
+
+  if (userId) {
+    user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        wishlists: {
+          select: {
+            id: true,
+            name: true,
+            items: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                url: true,
+              },
+            },
+          },
+        },
+      },
+    })
+  }
+
   return {
     props: {
+      user,
       ...(await serverSideTranslations(context.locale ?? 'pl', [
         'common',
         'forms',
         'users-search',
       ])),
     },
+    revalidate: 60,
   }
 }
 
