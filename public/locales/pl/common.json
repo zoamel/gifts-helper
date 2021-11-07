@@ -15,5 +15,6 @@
   "addToFollowed": "Dodaj do obserwowanych",
   "stopFollowing": "Przestań obsersować",
   "logout": "Wyloguj się",
-  "login": "Zaloguj się"
+  "login": "Zaloguj się",
+  "checkingAuthState": "Sprawdzanie stanu zalogowania"
 }

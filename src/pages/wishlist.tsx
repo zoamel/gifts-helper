@@ -266,7 +266,7 @@ const WishlistPage: NextPage = () => {
 
   return (
     <>
-      <MainLayout>
+      <MainLayout checkingAuth={status === 'loading'}>
         <AddNewItem
           requestInProgress={fetchingInProgress === true}
           onAddNewItem={(item) => handleAddNewItem(item)}

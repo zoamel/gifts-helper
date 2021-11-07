@@ -48,7 +48,7 @@ const UsersSearch: NextPage = () => {
   }
 
   return (
-    <MainLayout>
+    <MainLayout checkingAuth={status === 'loading'}>
       <UsersSearchForm
         onSearch={searchForUsers}
         requestInProgress={fetchingUsers}
