@@ -9,10 +9,15 @@ import { LayoutContainer } from './LayoutContainer'
 
 type Props = {
   children: React.ReactNode
+  staticTopElement?: React.ReactNode
   checkingAuth?: boolean
 }
 
-export const MainLayout = ({ children, checkingAuth }: Props) => {
+export const MainLayout = ({
+  children,
+  staticTopElement,
+  checkingAuth,
+}: Props) => {
   const { t } = useTranslation()
 
   if (checkingAuth) {
@@ -36,7 +41,9 @@ export const MainLayout = ({ children, checkingAuth }: Props) => {
       <HtmlHead />
       <LayoutContainer>
         <SideNav />
-        <MainContainer>{children}</MainContainer>
+        <MainContainer staticTopElement={staticTopElement}>
+          {children}
+        </MainContainer>
       </LayoutContainer>
     </>
   )

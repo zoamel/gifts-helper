@@ -266,12 +266,15 @@ const WishlistPage: NextPage = () => {
 
   return (
     <>
-      <MainLayout checkingAuth={status === 'loading'}>
-        <AddNewItem
-          requestInProgress={fetchingInProgress === true}
-          onAddNewItem={(item) => handleAddNewItem(item)}
-        />
-
+      <MainLayout
+        checkingAuth={status === 'loading'}
+        staticTopElement={
+          <AddNewItem
+            requestInProgress={fetchingInProgress === true}
+            onAddNewItem={(item) => handleAddNewItem(item)}
+          />
+        }
+      >
         <Box>
           <Divider colorScheme="red" my={6} />
 

@@ -4,9 +4,10 @@ import { MenuIcon, XIcon } from '@heroicons/react/solid'
 
 type Props = {
   children: React.ReactNode
+  staticTopElement?: React.ReactNode
 }
 
-export const MainContainer = ({ children }: Props) => {
+export const MainContainer = ({ children, staticTopElement }: Props) => {
   const [isSidenavOpened, setIsSidenavOpened] = useState(false)
 
   function toggleSidenav() {
@@ -35,7 +36,7 @@ export const MainContainer = ({ children }: Props) => {
         pt={8}
       >
         <Flex direction="column" height="full">
-          <Box>
+          <Box pb={4}>
             <IconButton
               display={{ base: 'inline-block', lg: 'none' }}
               onClick={toggleSidenav}
@@ -46,11 +47,13 @@ export const MainContainer = ({ children }: Props) => {
             />
           </Box>
 
+          {staticTopElement}
+
           <Flex
             direction="column"
             flex="1 1 0%"
             overflow="auto"
-            paddingInline={10}
+            paddingInlineEnd={{ base: 4, lg: 10 }}
           >
             {children}
           </Flex>
