@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Spinner, VStack, Heading } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
@@ -14,6 +14,7 @@ type Props = {
 
 export const MainLayout = ({ children, checkingAuth }: Props) => {
   const { t } = useTranslation()
+
   if (checkingAuth) {
     return (
       <>

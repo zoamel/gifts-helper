@@ -55,8 +55,8 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
             {...register('searchPhrase', {
               required: t('forms:fieldRequired') as string,
               minLength: {
-                value: 5,
-                message: t('forms:fieldMinLength', { value: 5 }),
+                value: 2,
+                message: t('forms:fieldMinLength', { value: 2 }),
               },
             })}
           />
