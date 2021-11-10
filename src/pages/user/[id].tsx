@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import {
   Heading,
   Box,
@@ -14,32 +13,32 @@ import {
   BreadcrumbLink,
   Progress,
 } from '@chakra-ui/react'
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next'
+import { GetStaticPaths, GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
-import { useSession, getSession } from 'next-auth/react'
+import useSwr from 'swr'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { LinkIcon } from '@heroicons/react/outline'
-import axios from 'axios'
 
 import giftImage from '../../../public/images/giftbox.png'
 import { MainLayout, ListContainer, ListItem } from '../../components/ui'
 import { User } from '../../models/users'
 import prisma from '../../lib/prisma'
+import { fetcher } from '../../lib/fetcher'
 
-type Props = {
-  user: User | null
-}
-
-const User = ({ user }: Props) => {
+const UserDetails = () => {
   const router = useRouter()
   const { id } = router.query
 
   const { t } = useTranslation(['common'])
 
-  if (router.isFallback) {
+  const { data, error } = useSwr(`/api/users/${id}`, fetcher)
+
+  const user = data as User
+
+  if (router.isFallback || !data) {
     return (
       <MainLayout>
         <Progress isIndeterminate colorScheme="teal" size="xs" />
@@ -129,37 +128,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const userId = context.params?.id as string | null
-
-  let user = null
-
-  if (userId) {
-    user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
-        wishlists: {
-          select: {
-            id: true,
-            name: true,
-            items: {
-              select: {
-                id: true,
-                name: true,
-                description: true,
-                url: true,
-              },
-            },
-          },
-        },
-      },
-    })
-  }
-
   return {
     props: {
-      user,
       ...(await serverSideTranslations(context.locale ?? 'pl', [
         'common',
         'forms',
@@ -170,4 +140,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 }
 
-export default User
+export default UserDetails
