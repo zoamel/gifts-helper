@@ -28,6 +28,9 @@ export default async function handle(
             id: true,
             name: true,
             items: {
+              orderBy: {
+                name: 'asc',
+              },
               select: {
                 id: true,
                 name: true,

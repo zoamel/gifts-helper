@@ -69,7 +69,7 @@ const UserDetails = () => {
             <Box flex={1} />
           </HStack>
 
-          <Box mt={8}>
+          <Box my={8}>
             <ListContainer>
               {user.wishlists[0]?.items.map((item) => (
                 <ListItem key={item.id}>
