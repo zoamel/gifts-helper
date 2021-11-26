@@ -13,26 +13,11 @@ export default async function handle(
     res.status(401)
   }
 
-  const { q } = req.query
+  // const { q } = req.query
 
-  const searchQuery = typeof q === 'string' ? q : q[0]
+  // const searchQuery = typeof q === 'string' ? q : q[0]
 
-  const foundUsers = await prisma.user.findMany({
-    where: {
-      OR: [
-        {
-          name: {
-            contains: searchQuery,
-          },
-        },
-        {
-          email: {
-            contains: searchQuery,
-          },
-        },
-      ],
-    },
-  })
+  const foundUsers = await prisma.user.findMany({})
 
   res.send(foundUsers)
 }

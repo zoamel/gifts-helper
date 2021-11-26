@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { Box, Text } from '@chakra-ui/react'
 import { GetStaticProps } from 'next'
@@ -12,7 +12,7 @@ import { UsersSearchForm, UsersList } from '../components/users-search'
 import { User } from '../models/users'
 
 const UsersSearch: NextPage = () => {
-  const { status } = useSession({
+  const { status, data: session } = useSession({
     required: true,
     onUnauthenticated() {
       signIn()
@@ -25,12 +25,40 @@ const UsersSearch: NextPage = () => {
   const [foundUsers, setFoundUsers] = useState<User[]>([])
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  async function searchForUsers(param: string) {
+  // async function searchForUsers(param: string) {
+  //   setFetchingUsers(true)
+  //
+  //   try {
+  //     const { data } = await axios.get<User[]>(`/api/users?q=${param}`)
+  //     setFoundUsers(data)
+  //     setFetchingUsers(false)
+  //     setErrorMessage(null)
+  //   } catch (error) {
+  //     let message = ''
+  //
+  //     if (axios.isAxiosError(error)) {
+  //       message = error.message
+  //     } else {
+  //       message = t('wishlist:requestErrorMessage')
+  //     }
+  //
+  //     setErrorMessage(message)
+  //     setFetchingUsers(false)
+  //   }
+  // }
+
+  async function getAllUsers() {
     setFetchingUsers(true)
+
+    const param = 'all'
 
     try {
       const { data } = await axios.get<User[]>(`/api/users?q=${param}`)
-      setFoundUsers(data)
+      const filteredData = data.filter(
+        (user) => user.email !== session?.user?.email
+      )
+
+      setFoundUsers(filteredData)
       setFetchingUsers(false)
       setErrorMessage(null)
     } catch (error) {
@@ -47,12 +75,16 @@ const UsersSearch: NextPage = () => {
     }
   }
 
+  React.useEffect(() => {
+    getAllUsers()
+  }, [])
+
   return (
     <MainLayout checkingAuth={status === 'loading'}>
-      <UsersSearchForm
-        onSearch={searchForUsers}
-        requestInProgress={fetchingUsers}
-      />
+      {/*<UsersSearchForm*/}
+      {/*  onSearch={searchForUsers}*/}
+      {/*  requestInProgress={fetchingUsers}*/}
+      {/*/>*/}
 
       {errorMessage && (
         <Box my={4}>
