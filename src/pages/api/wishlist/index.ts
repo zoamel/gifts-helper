@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import prisma from '../../../lib/prisma'
+import prisma from '@/lib/prisma'
 
 export const getWishlistSelect = {
   id: true,
@@ -21,7 +21,7 @@ export const getWishlistSelect = {
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const session = await getSession({ req })
 
