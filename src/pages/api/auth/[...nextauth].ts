@@ -1,6 +1,6 @@
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
 
 import prisma from '../../../lib/prisma'
 
@@ -15,5 +15,8 @@ export default NextAuth({
   theme: {
     colorScheme: 'light',
     logo: '/images/logo.svg',
+  },
+  pages: {
+    signIn: '/auth/signin',
   },
 })

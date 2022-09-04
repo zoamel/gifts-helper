@@ -16,5 +16,7 @@
   "stopFollowing": "Przestań obsersować",
   "logout": "Wyloguj się",
   "login": "Zaloguj się",
+  "loginPageTitle": "Logowanie",
+  "loginWithGoogle": "Zaloguj się przez Google",
   "checkingAuthState": "Sprawdzanie stanu zalogowania"
 }
