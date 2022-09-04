@@ -1,32 +1,34 @@
 import {
-  Heading,
-  Box,
-  Text,
-  HStack,
-  VStack,
-  Link,
-  IconButton,
-  Icon,
   Avatar,
+  Box,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  HStack,
+  Heading,
+  Icon,
+  IconButton,
+  Link,
   Progress,
+  Text,
+  VStack,
 } from '@chakra-ui/react'
+import { LinkIcon } from '@heroicons/react/24/outline'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
-import useSwr from 'swr'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { LinkIcon } from '@heroicons/react/outline'
+
+import { ListContainer, ListItem, MainLayout } from '@/components/ui'
+import prisma from '@/lib/prisma'
+import { User } from '@/models/users'
+import { UsersService } from '@/services/user'
 
 import giftImage from '../../../public/images/giftbox.png'
-import { MainLayout, ListContainer, ListItem } from '../../components/ui'
-import { User } from '../../models/users'
-import prisma from '../../lib/prisma'
-import { fetcher } from '../../lib/fetcher'
 
 const UserDetails = () => {
   const router = useRouter()
@@ -34,11 +36,11 @@ const UserDetails = () => {
 
   const { t } = useTranslation(['common'])
 
-  const { data, error } = useSwr(`/api/users/${id}`, fetcher)
+  const { data: user, isLoading } = useQuery(['user', id], () =>
+    UsersService.getUser(id as string),
+  )
 
-  const user = data as User
-
-  if (router.isFallback || !data) {
+  if (router.isFallback || isLoading) {
     return (
       <MainLayout>
         <Progress isIndeterminate colorScheme="teal" size="xs" />

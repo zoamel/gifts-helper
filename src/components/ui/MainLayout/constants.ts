@@ -1,14 +1,10 @@
-import {
-  ClipboardListIcon,
-  SearchIcon,
-  ViewListIcon,
-} from '@heroicons/react/outline'
+import { MagnifyingGlassIcon, QueueListIcon } from '@heroicons/react/24/solid'
 
 export const MENU_ITEMS = [
   {
     href: '/wishlist',
     label: 'wishlist',
-    icon: ClipboardListIcon,
+    icon: QueueListIcon,
   },
   // {
   //   href: '/shopping-list',
@@ -18,7 +14,7 @@ export const MENU_ITEMS = [
   {
     href: '/users-search',
     label: 'otherUsers',
-    icon: SearchIcon,
+    icon: MagnifyingGlassIcon,
   },
   // {
   //   href: '/following',

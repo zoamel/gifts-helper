@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import prisma from '../../../lib/prisma'
+import prisma from '@/lib/prisma'
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const session = await getSession({ req })
 
@@ -16,7 +16,7 @@ export default async function handle(
   if (req.method === 'PATCH') {
     const { id } = req.query
 
-    const itemId = typeof id === 'string' ? id : id[0]
+    const itemId = typeof id === 'string' ? id : id?.[0]
 
     const foundItem = await prisma.item.findUnique({
       where: {
@@ -60,7 +60,7 @@ export default async function handle(
   } else if (req.method === 'DELETE') {
     const { id } = req.query
 
-    const itemId = typeof id === 'string' ? id : id[0]
+    const itemId = typeof id === 'string' ? id : id?.[0]
 
     const deletedItem = await prisma.item.delete({ where: { id: itemId } })
 

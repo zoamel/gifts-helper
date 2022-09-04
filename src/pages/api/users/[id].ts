@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import prisma from '../../../lib/prisma'
+import prisma from '@/lib/prisma'
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const session = await getSession({ req })
 
@@ -16,7 +16,7 @@ export default async function handle(
   if (req.method === 'GET') {
     const { id } = req.query
 
-    const userId = typeof id === 'string' ? id : id[0]
+    const userId = typeof id === 'string' ? id : id?.[0]
 
     const foundUser = await prisma.user.findUnique({
       where: {

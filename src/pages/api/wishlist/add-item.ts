@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import prisma from '../../../lib/prisma'
-import { WishlistItem } from '../../../models/wishlist'
+import prisma from '@/lib/prisma'
+import { WishlistItem } from '@/models/wishlist'
+
 import { getWishlistSelect } from './index'
 
 type AddItemPayload = {
@@ -12,7 +13,7 @@ type AddItemPayload = {
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { item, wishlistId } = req.body as AddItemPayload
 

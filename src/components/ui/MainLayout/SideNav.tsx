@@ -1,11 +1,12 @@
 import React from 'react'
-import { Box, VStack, Button, Flex, Text } from '@chakra-ui/react'
+
+import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { useTranslation } from 'react-i18next'
 
-import { MENU_ITEMS } from './constants'
-import { MenuLink } from './MenuLink'
 import { AppLogo } from './AppLogo'
+import { MenuLink } from './MenuLink'
+import { MENU_ITEMS } from './constants'
 
 export const SideNav = () => {
   const { t } = useTranslation('common')
@@ -59,7 +60,7 @@ export const SideNav = () => {
                 variant="outline"
                 colorScheme="white"
                 size="md"
-                isLoading={status === 'loading'}
+                isLoading={status !== 'authenticated'}
                 onClick={() => {
                   signOut()
                 }}

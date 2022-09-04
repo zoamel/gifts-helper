@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+
 import { Box, Container, Flex, Icon, IconButton } from '@chakra-ui/react'
-import { MenuIcon, XIcon } from '@heroicons/react/solid'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid'
 
 type Props = {
   children: React.ReactNode
@@ -42,7 +43,11 @@ export const MainContainer = ({ children, staticTopElement }: Props) => {
               onClick={toggleSidenav}
               aria-label="menu button"
               icon={
-                isSidenavOpened ? <Icon as={XIcon} /> : <Icon as={MenuIcon} />
+                isSidenavOpened ? (
+                  <Icon as={XMarkIcon} />
+                ) : (
+                  <Icon as={Bars3Icon} />
+                )
               }
             />
           </Box>

@@ -1,6 +1,7 @@
 import React from 'react'
+
 import { Circle, HStack, Icon, Text } from '@chakra-ui/react'
-import { GiftIcon } from '@heroicons/react/outline'
+import { GiftIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from 'next-i18next'
 
 export const AppLogo = () => {

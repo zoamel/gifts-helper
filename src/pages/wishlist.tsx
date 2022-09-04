@@ -1,27 +1,26 @@
-import type { NextPage } from 'next'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
 import {
-  Divider,
-  Text,
   Box,
+  Divider,
   Progress,
-  Container,
-  HStack,
+  Text,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
-import { GetStaticProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useSession, signIn } from 'next-auth/react'
-import { useTranslation } from 'react-i18next'
 import axios from 'axios'
+import type { NextPage } from 'next'
+import { GetStaticProps } from 'next'
+import { signIn, useSession } from 'next-auth/react'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
 
 import { MainLayout } from '../components/ui'
 import {
   AddNewItem,
-  ItemsList,
-  ItemDetailsModal,
   DeleteItemConfirmation,
+  ItemDetailsModal,
+  ItemsList,
 } from '../components/wishlist'
 import { Wishlist, WishlistItem } from '../models/wishlist'
 
@@ -72,7 +71,7 @@ const WishlistPage: NextPage = () => {
 
       const { data: createdWishlist } = await axios.post<Wishlist>(
         '/api/wishlist',
-        payload
+        payload,
       )
 
       setWishlistId(createdWishlist.id)
@@ -124,7 +123,7 @@ const WishlistPage: NextPage = () => {
     try {
       const { data } = await axios.post<Wishlist>(
         '/api/wishlist/add-item',
-        payload
+        payload,
       )
 
       setWishlistItems(data.items)
@@ -158,7 +157,7 @@ const WishlistPage: NextPage = () => {
     try {
       const { data } = await axios.patch<WishlistItem>(
         `/api/items/${id}`,
-        payload
+        payload,
       )
 
       setWishlistItems((items) => {

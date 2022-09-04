@@ -1,9 +1,10 @@
-/** @type {import('next').NextConfig} */
+// @ts-check
 const { i18n } = require('./next-i18next.config')
 
-module.exports = {
-  // webpack5: false,
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   async redirects() {
     return [
       {
@@ -15,3 +16,5 @@ module.exports = {
   },
   i18n,
 }
+
+module.exports = nextConfig

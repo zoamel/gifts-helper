@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import type { NextPage } from 'next'
+
 import { Box, Text } from '@chakra-ui/react'
-import { GetStaticProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
 import axios from 'axios'
+import type { NextPage } from 'next'
+import { GetStaticProps } from 'next'
 import { signIn, useSession } from 'next-auth/react'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import { MainLayout } from '../components/ui'
-import { UsersSearchForm, UsersList } from '../components/users-search'
+import { UsersList, UsersSearchForm } from '../components/users-search'
 import { User } from '../models/users'
 
 const UsersSearch: NextPage = () => {
@@ -55,7 +56,7 @@ const UsersSearch: NextPage = () => {
     try {
       const { data } = await axios.get<User[]>(`/api/users?q=${param}`)
       const filteredData = data.filter(
-        (user) => user.email !== session?.user?.email
+        (user) => user.email !== session?.user?.email,
       )
 
       setFoundUsers(filteredData)
@@ -77,6 +78,7 @@ const UsersSearch: NextPage = () => {
 
   React.useEffect(() => {
     getAllUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

@@ -1,23 +1,24 @@
 import {
-  Stack,
-  Flex,
-  Text,
-  Skeleton,
-  IconButton,
-  Icon,
-  HStack,
-  Button,
-  VStack,
   Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
   Link,
+  Skeleton,
+  Stack,
+  Text,
+  VStack,
 } from '@chakra-ui/react'
-import { TrashIcon, LinkIcon } from '@heroicons/react/outline'
-import { useTranslation } from 'react-i18next'
+import { LinkIcon, TrashIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 
-import { WishlistItem } from '../../../models/wishlist'
-import emptyStateImg from '../../../../public/images/no_data.svg'
+import { WishlistItem } from '@/models/wishlist'
+
 import giftImage from '../../../../public/images/giftbox.png'
+import emptyStateImg from '../../../../public/images/no_data.svg'
 
 type Props = {
   items: WishlistItem[]
