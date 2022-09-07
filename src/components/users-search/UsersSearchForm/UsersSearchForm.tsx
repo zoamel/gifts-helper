@@ -1,14 +1,14 @@
 import {
-  FormControl,
-  FormLabel,
-  Input,
   Button,
-  chakra,
+  FormControl,
   FormErrorMessage,
+  FormLabel,
   HStack,
+  Input,
+  chakra,
 } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 type Props = {
   onSearch: (phrase: string) => void
@@ -49,8 +49,8 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
           <Input
             autoComplete="autocomplete"
             size="lg"
-            borderColor="teal.600"
-            focusBorderColor="teal.700"
+            borderColor="cyan.600"
+            focusBorderColor="cyan.700"
             placeholder={t('users-search:searchFieldPlaceholder')}
             {...register('searchPhrase', {
               required: t('forms:fieldRequired') as string,
@@ -66,7 +66,7 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
         </FormControl>
         <Button
           mt={3}
-          colorScheme="teal"
+          colorScheme="cyan"
           type="submit"
           size="lg"
           disabled={requestInProgress}

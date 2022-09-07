@@ -58,7 +58,8 @@ export const SideNav = () => {
               <Button
                 width="full"
                 variant="outline"
-                colorScheme="white"
+                color="black"
+                borderColor="cyan.700"
                 size="md"
                 isLoading={status !== 'authenticated'}
                 onClick={() => {
@@ -75,7 +76,8 @@ export const SideNav = () => {
               <Button
                 width="full"
                 variant="outline"
-                colorScheme="white"
+                color="black"
+                borderColor="cyan.700"
                 isLoading={status === 'loading'}
                 onClick={() => {
                   signIn()

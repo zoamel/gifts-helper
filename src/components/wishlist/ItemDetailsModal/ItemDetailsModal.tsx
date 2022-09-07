@@ -1,25 +1,26 @@
+import { useEffect } from 'react'
+
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Button,
-  VStack,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Textarea,
-  FormErrorMessage,
+  VStack,
   chakra,
 } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { WishlistItem } from '../../../models/wishlist'
-import { useEffect } from 'react'
 
 type Props = {
   item: WishlistItem | null
@@ -80,8 +81,8 @@ export const ItemDetailsModal = ({
               <FormControl id="item-name" isInvalid={!!errors.name} isRequired>
                 <FormLabel>{t('itemName')}</FormLabel>
                 <Input
-                  borderColor="teal.600"
-                  focusBorderColor="teal.700"
+                  borderColor="cyan.600"
+                  focusBorderColor="cyan.700"
                   placeholder={t('wishlist:newItemPlaceholder')}
                   {...register('name', {
                     required: t('forms:fieldRequired') as string,
@@ -95,8 +96,8 @@ export const ItemDetailsModal = ({
               <FormControl id="item-url">
                 <FormLabel>{t('itemURL')}</FormLabel>
                 <Input
-                  borderColor="teal.600"
-                  focusBorderColor="teal.700"
+                  borderColor="cyan.600"
+                  focusBorderColor="cyan.700"
                   placeholder={t('wishlist:itemURLPlaceholder')}
                   {...register('url')}
                 />
@@ -105,8 +106,8 @@ export const ItemDetailsModal = ({
               <FormControl id="item-description">
                 <FormLabel>{t('itemDescription')}</FormLabel>
                 <Textarea
-                  borderColor="teal.600"
-                  focusBorderColor="teal.700"
+                  borderColor="cyan.600"
+                  focusBorderColor="cyan.700"
                   placeholder={t('wishlist:itemDescriptionPlaceholder')}
                   {...register('description')}
                 />
@@ -116,7 +117,7 @@ export const ItemDetailsModal = ({
 
           <ModalFooter>
             <Button
-              colorScheme="teal"
+              colorScheme="pink"
               type="submit"
               mr={3}
               isLoading={saveInProgress}

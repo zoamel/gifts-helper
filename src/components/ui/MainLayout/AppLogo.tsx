@@ -9,7 +9,7 @@ export const AppLogo = () => {
 
   return (
     <HStack alignItems="center" spacing={3} p={3}>
-      <Circle size="36px" bg="cyan.900" color="white">
+      <Circle size="36px" bg="cyan.700" color="white">
         <Icon as={GiftIcon} w={5} h={5} />
       </Circle>
       <Text fontSize="xl">{t('common:appName')}</Text>

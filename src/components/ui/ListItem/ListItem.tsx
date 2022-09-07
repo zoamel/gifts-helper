@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { HStack, StackProps } from '@chakra-ui/react'
 
 export const ListItem = ({ children, ...props }: StackProps) => {
@@ -7,7 +8,7 @@ export const ListItem = ({ children, ...props }: StackProps) => {
       as="li"
       boxShadow="md"
       borderWidth="1px"
-      borderColor="teal.500"
+      borderColor="cyan.500"
       borderRadius="lg"
       px={4}
       py={2}

@@ -12,6 +12,13 @@ const theme = extendTheme({
       },
     },
   },
+  components: {
+    Text: {
+      baseStyle: {
+        color: 'black',
+      },
+    },
+  },
 })
 
 export default theme

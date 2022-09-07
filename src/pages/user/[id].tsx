@@ -43,7 +43,7 @@ const UserDetails = () => {
   if (router.isFallback || isLoading) {
     return (
       <MainLayout>
-        <Progress isIndeterminate colorScheme="teal" size="xs" />
+        <Progress isIndeterminate colorScheme="cyan" size="xs" />
       </MainLayout>
     )
   }

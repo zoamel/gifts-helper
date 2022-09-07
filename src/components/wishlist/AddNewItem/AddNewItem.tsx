@@ -1,15 +1,15 @@
 import {
-  FormControl,
-  FormLabel,
-  Input,
   Button,
-  chakra,
-  FormErrorMessage,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   HStack,
+  Input,
+  chakra,
 } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { WishlistItem } from '../../../models/wishlist'
 import { Card } from '../../ui'
@@ -61,8 +61,8 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
           <FormLabel>{t('wishlist:newItemLabel')}</FormLabel>
           <Input
             size="lg"
-            borderColor="teal.600"
-            focusBorderColor="teal.700"
+            borderColor="cyan.600"
+            focusBorderColor="cyan.700"
             placeholder={t('wishlist:newItemPlaceholder')}
             {...register('itemName', {
               required: t('forms:fieldRequired') as string,
@@ -74,7 +74,7 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
         </FormControl>
         <Button
           mt={3}
-          colorScheme="teal"
+          colorScheme="pink"
           type="submit"
           size="lg"
           disabled={requestInProgress}

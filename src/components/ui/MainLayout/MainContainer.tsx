@@ -34,6 +34,7 @@ export const MainContainer = ({ children, staticTopElement }: Props) => {
         maxWidth="container.lg"
         height="full"
         bg="white"
+        shadow="xl"
         pt={8}
       >
         <Flex direction="column" height="full">

@@ -1,9 +1,9 @@
-import { Text, Progress, Button, Avatar, HStack } from '@chakra-ui/react'
+import { Avatar, Button, HStack, Progress, Text } from '@chakra-ui/react'
+import { useTranslation } from 'next-i18next'
 import NextLink from 'next/link'
 
 import { User } from '../../../models/users'
-import { ListItem, ListContainer } from '../../ui'
-import { useTranslation } from 'next-i18next'
+import { ListContainer, ListItem } from '../../ui'
 
 type Props = {
   users: User[]
@@ -13,7 +13,7 @@ export const UsersList = ({ users, requestInProgress }: Props) => {
   const { t } = useTranslation(['users-search'])
 
   if (requestInProgress) {
-    return <Progress isIndeterminate colorScheme="teal" size="xs" mt={2} />
+    return <Progress isIndeterminate colorScheme="cyan" size="xs" mt={2} />
   }
   return (
     <ListContainer mt={8}>
@@ -30,7 +30,7 @@ export const UsersList = ({ users, requestInProgress }: Props) => {
           </HStack>
 
           <NextLink href={`/user/${encodeURIComponent(user.id)}`} passHref>
-            <Button colorScheme="teal" variant="outline">
+            <Button colorScheme="cyan" variant="outline">
               {t('users-search:visitProfile')}
             </Button>
           </NextLink>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Spinner, VStack, Heading } from '@chakra-ui/react'
+
+import { Heading, Spinner, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
 import { HtmlHead } from './HtmlHead'
-import { SideNav } from './SideNav'
-import { MainContainer } from './MainContainer'
 import { LayoutContainer } from './LayoutContainer'
+import { MainContainer } from './MainContainer'
+import { SideNav } from './SideNav'
 
 type Props = {
   children: React.ReactNode
@@ -28,7 +29,7 @@ export const MainLayout = ({
           <MainContainer>
             <VStack spacing={3} alignItems="center">
               <Heading size="lg">{t('common:checkingAuthState')}</Heading>
-              <Spinner size="xl" color="teal" thickness="4px" speed="0.5s" />
+              <Spinner size="xl" color="cyan" thickness="4px" speed="0.5s" />
             </VStack>
           </MainContainer>
         </LayoutContainer>

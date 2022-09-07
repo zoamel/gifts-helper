@@ -43,7 +43,7 @@ export const ItemsList = ({
           key={item.id}
           boxShadow="md"
           borderWidth="1px"
-          borderColor="teal.500"
+          borderColor="cyan.500"
           borderRadius="lg"
           px={4}
           py={2}
@@ -82,7 +82,7 @@ export const ItemsList = ({
             <Button
               variant="outline"
               size="sm"
-              colorScheme="teal"
+              colorScheme="cyan"
               onClick={() => onSelectItem(item)}
             >
               {t('wishlist:itemEditLabel')}

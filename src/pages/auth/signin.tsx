@@ -5,20 +5,14 @@ import {
   Box,
   Button,
   Center,
-  Divider,
-  FormControl,
-  FormLabel,
-  HStack,
   Heading,
   Hide,
   Icon,
-  Input,
   Show,
   Stack,
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { GiftIcon } from '@heroicons/react/24/solid'
 import { GetServerSideProps } from 'next'
 import { getProviders, signIn } from 'next-auth/react'
 import { useTranslation } from 'next-i18next'
@@ -27,9 +21,6 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { AiOutlineGoogle } from 'react-icons/ai'
-import { FcGoogle } from 'react-icons/fc'
-
-import { Card } from '@/components/ui'
 
 type Provider = {
   name: string

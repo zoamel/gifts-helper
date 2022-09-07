@@ -1,8 +1,9 @@
 import React from 'react'
+
 import { HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { useTranslation } from 'next-i18next'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
 
 type Props = {
   href: string
@@ -30,14 +31,17 @@ export const MenuLink = ({ href, label, icon }: Props) => {
         textDecoration="none"
         width="100%"
         bg={isActive ? 'cyan.700' : 'inherit'}
+        color={isActive ? 'white' : 'black'}
         _hover={{
           color: 'white',
           bg: 'cyan.700',
         }}
       >
         <HStack alignItems="center">
-          <Icon h={4} w={4} as={icon} />
-          <Text fontSize="md">{t(label)}</Text>
+          <Icon h={4} w={4} as={icon} color="inherit" />
+          <Text fontSize="md" color="inherit">
+            {t(label)}
+          </Text>
         </HStack>
       </Link>
     </NextLink>

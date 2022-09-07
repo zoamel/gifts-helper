@@ -278,7 +278,7 @@ const WishlistPage: NextPage = () => {
           <Divider colorScheme="red" my={6} />
 
           {fetchingInProgress && (
-            <Progress isIndeterminate colorScheme="teal" size="xs" my={2} />
+            <Progress isIndeterminate colorScheme="cyan" size="xs" my={2} />
           )}
 
           {!fetchingInProgress && (
