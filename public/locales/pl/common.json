@@ -18,5 +18,6 @@
   "login": "Zaloguj się",
   "loginPageTitle": "Logowanie",
   "loginWithGoogle": "Zaloguj się przez Google",
+  "loginGreetings": "Zaloguj się aby korzystać z list życzeń i zakupów",
   "checkingAuthState": "Sprawdzanie stanu zalogowania"
 }
