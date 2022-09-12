@@ -38,14 +38,14 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?    @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  wishlists     Wishlist[]
+  wishlist      Wishlist?
 }
 
 model VerificationToken {
@@ -58,11 +58,10 @@ model VerificationToken {
 
 model Wishlist {
   id        String   @id @default(cuid())
-  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String   @unique
   items     Item[]
 }
 
@@ -73,6 +72,6 @@ model Item {
   url         String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  wishlist    Wishlist @relation(fields: [wishlistId], references: [id])
+  wishlist    Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
   wishlistId  String
 }

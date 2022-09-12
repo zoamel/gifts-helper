@@ -11,11 +11,11 @@ export const MENU_ITEMS = [
   //   label: 'NIE WCHODZIĆ',
   //   icon: ViewListIcon,
   // },
-  {
-    href: '/users-search',
-    label: 'otherUsers',
-    icon: MagnifyingGlassIcon,
-  },
+  // {
+  //   href: '/users-search',
+  //   label: 'otherUsers',
+  //   icon: MagnifyingGlassIcon,
+  // },
   // {
   //   href: '/following',
   //   label: 'followedUsers',

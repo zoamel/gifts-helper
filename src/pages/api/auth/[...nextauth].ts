@@ -19,4 +19,23 @@ export default NextAuth({
   pages: {
     signIn: '/auth/signin',
   },
+  callbacks: {
+    async signIn({ user }) {
+      const userWishlists = await prisma.wishlist.count({
+        where: {
+          ownerId: user.id,
+        },
+      })
+
+      if (userWishlists === 0) {
+        await prisma.wishlist.create({
+          data: {
+            ownerId: user.id,
+          },
+        })
+      }
+
+      return true
+    },
+  },
 })

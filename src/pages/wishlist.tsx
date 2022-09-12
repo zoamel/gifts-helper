@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import type { NextPage } from 'next'
 import { GetStaticProps } from 'next'
@@ -22,7 +23,7 @@ import {
   ItemDetailsModal,
   ItemsList,
 } from '../components/wishlist'
-import { Wishlist, WishlistItem } from '../models/wishlist'
+import { WishlistItem } from '../models/wishlist'
 
 const WishlistPage: NextPage = () => {
   const {
@@ -33,21 +34,14 @@ const WishlistPage: NextPage = () => {
 
   const toast = useToast()
 
+  const queryClient = useQueryClient()
+
   const { t } = useTranslation(['common', 'wishlist'])
 
   const deleteRef = useRef(null)
 
-  const [wishlistId, setWishlistId] = useState<string | null>(null)
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([])
   const [selectedItem, setSelectedItem] = useState<WishlistItem | null>(null)
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
-
-  const [fetchingInProgress, setFetchingInProgress] = useState<boolean>(true)
-  const [addingItemInProgress, setAddingItemInProgress] = useState(false)
-  const [updatedInProgress, setUpdateInProgress] = useState(false)
-  const [deleteInProgress, setDeleteInProgress] = useState(false)
-
-  const [fetchingError, setFetchingError] = useState<string | null>(null)
 
   const { status } = useSession({
     required: true,
@@ -56,191 +50,123 @@ const WishlistPage: NextPage = () => {
     },
   })
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      fetchWishlist()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status])
+  const {
+    data: items,
+    isLoading: itemsLoading,
+    isError,
+  } = useQuery(
+    ['wishlistItems'],
+    async () => {
+      const { data } = await axios.get<WishlistItem[]>('/api/wishlist')
+      return data
+    },
+    {
+      enabled: status === 'authenticated',
+    },
+  )
 
-  async function createDefaultWishlist() {
-    try {
-      const payload: Pick<Wishlist, 'name'> = {
-        name: 'List do św. Mikołaja',
-      }
+  const addItemMutation = useMutation(
+    (payload: WishlistItem) =>
+      axios.post<WishlistItem>('/api/wishlist/add-item', payload),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['wishlistItems'])
+        toast({
+          status: 'success',
+          title: t('wishlist:itemAddSuccessMessage'),
+        })
+      },
+      onError: (error) => {
+        let message = ''
 
-      const { data: createdWishlist } = await axios.post<Wishlist>(
-        '/api/wishlist',
-        payload,
-      )
-
-      setWishlistId(createdWishlist.id)
-      setFetchingInProgress(false)
-      setFetchingError(null)
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setFetchingError(error.message)
-        setFetchingInProgress(false)
-      } else {
-        setFetchingError('Something went wrong')
-        setFetchingInProgress(false)
-      }
-    }
-  }
-
-  async function fetchWishlist() {
-    setFetchingInProgress(true)
-
-    try {
-      const { data } = await axios.get<Wishlist>('/api/wishlist')
-
-      setWishlistItems(data.items)
-      setWishlistId(data.id)
-      setFetchingInProgress(false)
-      setFetchingError(null)
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 404) {
-          createDefaultWishlist()
+        if (axios.isAxiosError(error)) {
+          message = error.message
         } else {
-          setFetchingError(error.message)
-          setFetchingInProgress(false)
-        }
-      } else {
-        setFetchingError('Something went wrong')
-        setFetchingInProgress(false)
-      }
-    }
-  }
-
-  async function handleAddNewItem(item: WishlistItem) {
-    const payload = {
-      item,
-      wishlistId,
-    }
-
-    setAddingItemInProgress(true)
-    try {
-      const { data } = await axios.post<Wishlist>(
-        '/api/wishlist/add-item',
-        payload,
-      )
-
-      setWishlistItems(data.items)
-      setAddingItemInProgress(false)
-      toast({
-        status: 'success',
-        title: t('wishlist:itemAddSuccessMessage'),
-      })
-    } catch (error) {
-      let message = ''
-      if (axios.isAxiosError(error)) {
-        message = error.message
-      } else {
-        message = t('wishlist:requestErrorMessage')
-      }
-
-      toast({
-        status: 'error',
-        title: message,
-      })
-
-      setAddingItemInProgress(false)
-    }
-  }
-
-  async function handleItemEditSave(item: WishlistItem) {
-    const { id, ...payload } = item
-
-    setUpdateInProgress(true)
-
-    try {
-      const { data } = await axios.patch<WishlistItem>(
-        `/api/items/${id}`,
-        payload,
-      )
-
-      setWishlistItems((items) => {
-        const index = items.findIndex((item) => item.id === data.id)
-
-        items[index] = {
-          id: data.id,
-          name: data.name,
-          url: data.url,
-          description: data.description,
+          message = t('wishlist:requestErrorMessage')
         }
 
-        return items
-      })
+        toast({
+          status: 'error',
+          title: message,
+        })
+      },
+    },
+  )
 
-      setSelectedItem(null)
-      setUpdateInProgress(false)
+  const updateItemMutation = useMutation(
+    (payload: WishlistItem) => {
+      const { id, ...item } = payload
+      return axios.patch<WishlistItem>(`/api/items/${id}`, item)
+    },
+    {
+      onSuccess: () => {
+        setSelectedItem(null)
+        onCloseEditModal()
+        queryClient.invalidateQueries(['wishlistItems'])
 
-      onCloseEditModal()
+        toast({
+          status: 'success',
+          title: t('wishlist:itemUpdateSuccessMessage'),
+        })
+      },
+      onError: (error) => {
+        let message = ''
 
-      toast({
-        status: 'success',
-        title: t('wishlist:itemUpdateSuccessMessage'),
-      })
-    } catch (error) {
-      let message = ''
+        if (axios.isAxiosError(error)) {
+          message = error.message
+        } else {
+          message = t('wishlist:requestErrorMessage')
+        }
 
-      if (axios.isAxiosError(error)) {
-        message = error.message
-      } else {
-        message = t('wishlist:requestErrorMessage')
-      }
+        toast({
+          status: 'error',
+          title: message,
+        })
+      },
+    },
+  )
 
-      toast({
-        status: 'error',
-        title: message,
-      })
+  const deleteItemMutation = useMutation(
+    (id: string) => axios.delete(`/api/items/${id}`),
+    {
+      onSuccess() {
+        setSelectedItem(null)
+        setIsConfirmDeleteOpen(false)
+        queryClient.invalidateQueries(['wishlistItems'])
 
-      setUpdateInProgress(false)
-    }
-  }
+        toast({
+          status: 'info',
+          title: t('wishlist:itemDeleteSuccessMessage'),
+        })
+      },
+      onError(error) {
+        let message = ''
 
-  async function handleItemDelete() {
+        if (axios.isAxiosError(error)) {
+          message = error.message
+        } else {
+          message = t('wishlist:requestErrorMessage')
+        }
+
+        toast({
+          status: 'error',
+          title: message,
+        })
+
+        setIsConfirmDeleteOpen(false)
+        setSelectedItem(null)
+      },
+    },
+  )
+
+  function handleItemDelete() {
     if (!selectedItem) {
       return
     }
 
     const { id } = selectedItem
 
-    setDeleteInProgress(true)
-
-    try {
-      await axios.delete(`/api/items/${id}`)
-
-      setWishlistItems((items) => items.filter((item) => item.id !== id))
-
-      setSelectedItem(null)
-      setDeleteInProgress(false)
-      setIsConfirmDeleteOpen(false)
-
-      toast({
-        status: 'info',
-        title: t('wishlist:itemDeleteSuccessMessage'),
-      })
-    } catch (error) {
-      let message = ''
-
-      if (axios.isAxiosError(error)) {
-        message = error.message
-      } else {
-        message = t('wishlist:requestErrorMessage')
-      }
-
-      setIsConfirmDeleteOpen(false)
-
-      toast({
-        status: 'error',
-        title: message,
-      })
-
-      setSelectedItem(null)
-      setDeleteInProgress(false)
-    }
+    deleteItemMutation.mutate(id!)
   }
 
   const onInitializeDeleteItem = (item: WishlistItem) => {
@@ -253,11 +179,11 @@ const WishlistPage: NextPage = () => {
     setIsConfirmDeleteOpen(false)
   }
 
-  if (fetchingError) {
+  if (isError) {
     return (
       <MainLayout>
         <Text colorScheme="red" textAlign="center">
-          {fetchingError}
+          {t('wishlist:requestErrorMessage')}
         </Text>
       </MainLayout>
     )
@@ -269,22 +195,24 @@ const WishlistPage: NextPage = () => {
         checkingAuth={status === 'loading'}
         staticTopElement={
           <AddNewItem
-            requestInProgress={fetchingInProgress === true}
-            onAddNewItem={(item) => handleAddNewItem(item)}
+            requestInProgress={addItemMutation.isLoading}
+            onAddNewItem={(item) => {
+              addItemMutation.mutate(item)
+            }}
           />
         }
       >
         <Box>
           <Divider colorScheme="red" my={6} />
 
-          {fetchingInProgress && (
+          {itemsLoading && (
             <Progress isIndeterminate colorScheme="cyan" size="xs" my={2} />
           )}
 
-          {!fetchingInProgress && (
+          {items && (
             <ItemsList
-              items={wishlistItems}
-              addingInProgress={addingItemInProgress}
+              items={items}
+              addingInProgress={addItemMutation.isLoading}
               onSelectItem={(item) => {
                 setSelectedItem(item)
                 onOpenEditModal()
@@ -304,9 +232,9 @@ const WishlistPage: NextPage = () => {
 
       <ItemDetailsModal
         isOpened={editModalOpened}
-        saveInProgress={updatedInProgress}
+        saveInProgress={updateItemMutation.isLoading}
         onClose={onCloseEditModal}
-        onSave={handleItemEditSave}
+        onSave={(item) => updateItemMutation.mutate(item)}
         item={selectedItem}
       />
     </>

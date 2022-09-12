@@ -29,7 +29,7 @@ export const MainLayout = ({
           <MainContainer>
             <VStack spacing={3} alignItems="center">
               <Heading size="lg">{t('common:checkingAuthState')}</Heading>
-              <Spinner size="xl" color="cyan" thickness="4px" speed="0.5s" />
+              <Spinner size="xl" color="teal" thickness="4px" speed="0.5s" />
             </VStack>
           </MainContainer>
         </LayoutContainer>
