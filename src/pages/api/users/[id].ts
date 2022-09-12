@@ -23,13 +23,12 @@ export default async function handle(
         id: userId as string,
       },
       include: {
-        wishlists: {
+        wishlist: {
           select: {
             id: true,
-            name: true,
             items: {
               orderBy: {
-                name: 'asc',
+                createdAt: 'desc',
               },
               select: {
                 id: true,
