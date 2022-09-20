@@ -10,11 +10,14 @@ import {
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import { GetStaticProps } from 'next'
+import { unstable_getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'react-i18next'
+
+import prisma from '@/lib/prisma'
 
 import { MainLayout } from '../components/ui'
 import {
@@ -24,6 +27,7 @@ import {
   ItemsList,
 } from '../components/wishlist'
 import { WishlistItem } from '../models/wishlist'
+import { authOptions } from './api/auth/[...nextauth]'
 
 const WishlistPage: NextPage = () => {
   const {
@@ -241,7 +245,41 @@ const WishlistPage: NextPage = () => {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const session = await unstable_getServerSession(req, res, authOptions)
+
+  if (session && session.user && session.user.email) {
+    const userEmail = session.user.email
+
+    const userWishlists = await prisma.wishlist.count({
+      where: {
+        owner: {
+          email: userEmail,
+        },
+      },
+    })
+
+    if (userWishlists === 0) {
+      const user = await prisma.user.findUnique({
+        where: {
+          email: userEmail,
+        },
+      })
+
+      if (user) {
+        await prisma.wishlist.create({
+          data: {
+            ownerId: user.id,
+          },
+        })
+      }
+    }
+  }
+
   return {
     props: {
       ...(await serverSideTranslations(locale ?? 'pl', [

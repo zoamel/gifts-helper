@@ -1,10 +1,10 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import NextAuth from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
-import prisma from '../../../lib/prisma'
+import prisma from '@/lib/prisma'
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -19,23 +19,6 @@ export default NextAuth({
   pages: {
     signIn: '/auth/signin',
   },
-  callbacks: {
-    async signIn({ user }) {
-      const userWishlists = await prisma.wishlist.count({
-        where: {
-          ownerId: user.id,
-        },
-      })
+}
 
-      if (userWishlists === 0) {
-        await prisma.wishlist.create({
-          data: {
-            ownerId: user.id,
-          },
-        })
-      }
-
-      return true
-    },
-  },
-})
+export default NextAuth(authOptions)
