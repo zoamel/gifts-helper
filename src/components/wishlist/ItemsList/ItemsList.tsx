@@ -21,17 +21,11 @@ import emptyStateImg from '../../../../public/images/no_data.svg'
 
 type Props = {
   items: WishlistItem[]
-  addingInProgress: boolean
   onSelectItem: (item: WishlistItem) => void
   onDeleteItem: (item: WishlistItem) => void
 }
 
-export const ItemsList = ({
-  items,
-  addingInProgress,
-  onSelectItem,
-  onDeleteItem,
-}: Props) => {
+export const ItemsList = ({ items, onSelectItem, onDeleteItem }: Props) => {
   const { t } = useTranslation(['common', 'wishlist'])
 
   return (
@@ -99,12 +93,10 @@ export const ItemsList = ({
         </HStack>
       ))}
 
-      <Skeleton height={16} isLoaded={!addingInProgress} borderRadius="lg" />
-
       {items.length === 0 && (
         <VStack spacing={8}>
           <Text color="blackAlpha.700" fontSize="xl">
-            Nie masz jeszcze przedmiotow na swojej liscie
+            {t('wishlist:noItemsOnYourList')}
           </Text>
           <Box>
             <Image

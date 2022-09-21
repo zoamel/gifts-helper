@@ -23,7 +23,7 @@ export default async function handle(
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
       select: {
         id: true,

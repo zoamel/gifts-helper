@@ -55,12 +55,7 @@ export const MainContainer = ({ children, staticTopElement }: Props) => {
 
           {staticTopElement}
 
-          <Flex
-            direction="column"
-            flex="1 1 0%"
-            overflow="auto"
-            paddingInlineEnd={{ base: 4, lg: 10 }}
-          >
+          <Flex direction="column" flex="1 1 0%" overflow="auto">
             {children}
           </Flex>
         </Flex>

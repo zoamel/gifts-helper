@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Heading, Spinner, VStack } from '@chakra-ui/react'
+import { Heading, Progress, Spinner, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
 import { HtmlHead } from './HtmlHead'
@@ -29,7 +29,14 @@ export const MainLayout = ({
           <MainContainer>
             <VStack spacing={3} alignItems="center">
               <Heading size="lg">{t('common:checkingAuthState')}</Heading>
-              <Spinner size="xl" color="teal" thickness="4px" speed="0.5s" />
+              <Progress
+                isIndeterminate
+                colorScheme="cyan"
+                size="xs"
+                my={2}
+                width="full"
+              />
+              {/* <Spinner size="xl" color="teal" thickness="4px" speed="0.5s" /> */}
             </VStack>
           </MainContainer>
         </LayoutContainer>

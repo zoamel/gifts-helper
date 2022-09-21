@@ -11,61 +11,48 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next'
-import { GetStaticProps } from 'next'
 import { unstable_getServerSession } from 'next-auth'
-import { signIn, useSession } from 'next-auth/react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'react-i18next'
 
-import prisma from '@/lib/prisma'
-
-import { MainLayout } from '../components/ui'
+import { MainLayout } from '@/components/ui'
 import {
   AddNewItem,
   DeleteItemConfirmation,
   ItemDetailsModal,
   ItemsList,
-} from '../components/wishlist'
-import { WishlistItem } from '../models/wishlist'
+} from '@/components/wishlist'
+import prisma from '@/lib/prisma'
+import { WishlistItem } from '@/models/wishlist'
+
 import { authOptions } from './api/auth/[...nextauth]'
 
-const WishlistPage: NextPage = () => {
+type Props = {
+  initialItems: WishlistItem[]
+}
+
+const WishlistPage: NextPage<Props> = ({ initialItems }) => {
+  const toast = useToast()
+  const queryClient = useQueryClient()
+  const { t } = useTranslation(['common', 'wishlist'])
   const {
     isOpen: editModalOpened,
     onOpen: onOpenEditModal,
     onClose: onCloseEditModal,
   } = useDisclosure()
-
-  const toast = useToast()
-
-  const queryClient = useQueryClient()
-
-  const { t } = useTranslation(['common', 'wishlist'])
-
   const deleteRef = useRef(null)
 
   const [selectedItem, setSelectedItem] = useState<WishlistItem | null>(null)
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
 
-  const { status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      signIn()
-    },
-  })
-
-  const {
-    data: items,
-    isLoading: itemsLoading,
-    isError,
-  } = useQuery(
+  const { data: items, isError } = useQuery(
     ['wishlistItems'],
     async () => {
       const { data } = await axios.get<WishlistItem[]>('/api/wishlist')
       return data
     },
     {
-      enabled: status === 'authenticated',
+      initialData: initialItems,
     },
   )
 
@@ -73,26 +60,16 @@ const WishlistPage: NextPage = () => {
     (payload: WishlistItem) =>
       axios.post<WishlistItem>('/api/wishlist/add-item', payload),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['wishlistItems'])
-        toast({
-          status: 'success',
-          title: t('wishlist:itemAddSuccessMessage'),
-        })
-      },
       onError: (error) => {
-        let message = ''
-
-        if (axios.isAxiosError(error)) {
-          message = error.message
-        } else {
-          message = t('wishlist:requestErrorMessage')
-        }
+        console.error(error)
 
         toast({
           status: 'error',
-          title: message,
+          title: t('wishlist:requestErrorMessage'),
         })
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(['wishlistItems'])
       },
     },
   )
@@ -111,6 +88,7 @@ const WishlistPage: NextPage = () => {
         toast({
           status: 'success',
           title: t('wishlist:itemUpdateSuccessMessage'),
+          colorScheme: 'cyan',
         })
       },
       onError: (error) => {
@@ -141,6 +119,7 @@ const WishlistPage: NextPage = () => {
         toast({
           status: 'info',
           title: t('wishlist:itemDeleteSuccessMessage'),
+          colorScheme: 'cyan',
         })
       },
       onError(error) {
@@ -196,7 +175,6 @@ const WishlistPage: NextPage = () => {
   return (
     <>
       <MainLayout
-        checkingAuth={status === 'loading'}
         staticTopElement={
           <AddNewItem
             requestInProgress={addItemMutation.isLoading}
@@ -209,14 +187,9 @@ const WishlistPage: NextPage = () => {
         <Box>
           <Divider colorScheme="red" my={6} />
 
-          {itemsLoading && (
-            <Progress isIndeterminate colorScheme="cyan" size="xs" my={2} />
-          )}
-
           {items && (
             <ItemsList
               items={items}
-              addingInProgress={addItemMutation.isLoading}
               onSelectItem={(item) => {
                 setSelectedItem(item)
                 onOpenEditModal()
@@ -249,45 +222,62 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
   res,
+  resolvedUrl,
 }) => {
   const session = await unstable_getServerSession(req, res, authOptions)
 
-  if (session && session.user && session.user.email) {
-    const userEmail = session.user.email
-
-    const userWishlists = await prisma.wishlist.count({
-      where: {
-        owner: {
-          email: userEmail,
-        },
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/auth/signin?callbackUrl=${encodeURIComponent(
+          req.headers.host + resolvedUrl,
+        )}`,
+        permanent: false,
       },
-    })
-
-    if (userWishlists === 0) {
-      const user = await prisma.user.findUnique({
-        where: {
-          email: userEmail,
-        },
-      })
-
-      if (user) {
-        await prisma.wishlist.create({
-          data: {
-            ownerId: user.id,
-          },
-        })
-      }
     }
   }
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? 'pl', [
-        'common',
-        'wishlist',
-        'forms',
-      ])),
-    },
+  if (session?.user?.email) {
+    const items = await prisma.item.findMany({
+      where: {
+        wishlist: {
+          owner: {
+            email: session.user.email,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+      select: {
+        id: true,
+        name: true,
+        url: true,
+        description: true,
+      },
+    })
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale ?? 'pl', [
+          'common',
+          'wishlist',
+          'forms',
+        ])),
+        initialItems: items,
+      },
+    }
+  } else {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale ?? 'pl', [
+          'common',
+          'wishlist',
+          'forms',
+        ])),
+        initialItems: [],
+      },
+    }
   }
 }
 

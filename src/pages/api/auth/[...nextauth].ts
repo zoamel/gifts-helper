@@ -19,6 +19,17 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
   },
+  events: {
+    async createUser(message) {
+      if (message.user) {
+        await prisma.wishlist.create({
+          data: {
+            ownerId: message.user.id,
+          },
+        })
+      }
+    },
+  },
 }
 
 export default NextAuth(authOptions)

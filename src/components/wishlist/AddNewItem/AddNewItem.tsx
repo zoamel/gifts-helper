@@ -1,18 +1,17 @@
 import {
   Button,
-  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   HStack,
   Input,
+  Progress,
   chakra,
 } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
-import { WishlistItem } from '../../../models/wishlist'
-import { Card } from '../../ui'
+import { WishlistItem } from '@/models/wishlist'
 
 type Props = {
   onAddNewItem: (item: WishlistItem) => void
@@ -82,6 +81,10 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
           {t('forms:newItemSubmit')}
         </Button>
       </HStack>
+
+      {requestInProgress && (
+        <Progress isIndeterminate colorScheme="pink" size="xs" my={1} />
+      )}
     </chakra.form>
   )
 }
