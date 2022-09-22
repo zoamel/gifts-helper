@@ -1,14 +1,12 @@
 import { useRef, useState } from 'react'
 
+import { Box, Divider, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import {
-  Box,
-  Divider,
-  Progress,
-  Text,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next'
 import { unstable_getServerSession } from 'next-auth'
@@ -24,6 +22,7 @@ import {
   ItemsList,
 } from '@/components/wishlist'
 import { WishlistItem } from '@/models/wishlist'
+import { WishlistService } from '@/services/wishlist'
 
 import { authOptions } from './api/auth/[...nextauth]'
 
@@ -48,16 +47,13 @@ const WishlistPage: NextPage = () => {
   const [selectedItem, setSelectedItem] = useState<WishlistItem | null>(null)
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
 
-  const { data: items, isError } = useQuery(
-    ['wishlistItems'],
-    async () => {
-      const { data } = await axios.get<WishlistItem[]>('/api/wishlist')
-      return data
-    },
-    {
-      enabled: status === 'authenticated',
-    },
-  )
+  const {
+    data: items,
+    isLoading: loadingItems,
+    isError,
+  } = useQuery(['wishlistItems'], WishlistService.getWishlistItems, {
+    enabled: status === 'authenticated',
+  })
 
   const addItemMutation = useMutation(
     (payload: WishlistItem) =>
@@ -193,6 +189,7 @@ const WishlistPage: NextPage = () => {
           {items && (
             <ItemsList
               items={items}
+              loadingItems={loadingItems}
               onSelectItem={(item) => {
                 setSelectedItem(item)
                 onOpenEditModal()
@@ -226,9 +223,20 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const queryClient = new QueryClient()
+
+  const session = await unstable_getServerSession(req, res, authOptions)
+
+  if (session) {
+    await queryClient.prefetchQuery(
+      ['wishlistItems'],
+      WishlistService.getWishlistItems,
+    )
+  }
+
   return {
     props: {
-      session: await unstable_getServerSession(req, res, authOptions),
+      session,
       ...(await serverSideTranslations(locale ?? 'pl', [
         'common',
         'wishlist',
