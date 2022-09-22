@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next'
 import { unstable_getServerSession } from 'next-auth'
+import { signIn, useSession } from 'next-auth/react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'react-i18next'
 
@@ -22,16 +23,18 @@ import {
   ItemDetailsModal,
   ItemsList,
 } from '@/components/wishlist'
-import prisma from '@/lib/prisma'
 import { WishlistItem } from '@/models/wishlist'
 
 import { authOptions } from './api/auth/[...nextauth]'
 
-type Props = {
-  initialItems: WishlistItem[]
-}
+const WishlistPage: NextPage = () => {
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      signIn()
+    },
+  })
 
-const WishlistPage: NextPage<Props> = ({ initialItems }) => {
   const toast = useToast()
   const queryClient = useQueryClient()
   const { t } = useTranslation(['common', 'wishlist'])
@@ -52,7 +55,7 @@ const WishlistPage: NextPage<Props> = ({ initialItems }) => {
       return data
     },
     {
-      initialData: initialItems,
+      enabled: status === 'authenticated',
     },
   )
 
@@ -222,62 +225,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
   res,
-  resolvedUrl,
 }) => {
-  const session = await unstable_getServerSession(req, res, authOptions)
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: `/auth/signin?callbackUrl=${encodeURIComponent(
-          req.headers.host + resolvedUrl,
-        )}`,
-        permanent: false,
-      },
-    }
-  }
-
-  if (session?.user?.email) {
-    const items = await prisma.item.findMany({
-      where: {
-        wishlist: {
-          owner: {
-            email: session.user.email,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-      select: {
-        id: true,
-        name: true,
-        url: true,
-        description: true,
-      },
-    })
-
-    return {
-      props: {
-        ...(await serverSideTranslations(locale ?? 'pl', [
-          'common',
-          'wishlist',
-          'forms',
-        ])),
-        initialItems: items,
-      },
-    }
-  } else {
-    return {
-      props: {
-        ...(await serverSideTranslations(locale ?? 'pl', [
-          'common',
-          'wishlist',
-          'forms',
-        ])),
-        initialItems: [],
-      },
-    }
+  return {
+    props: {
+      session: await unstable_getServerSession(req, res, authOptions),
+      ...(await serverSideTranslations(locale ?? 'pl', [
+        'common',
+        'wishlist',
+        'forms',
+      ])),
+    },
   }
 }
 
