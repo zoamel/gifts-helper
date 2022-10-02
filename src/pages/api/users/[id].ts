@@ -28,7 +28,7 @@ export default async function handle(
             id: true,
             items: {
               orderBy: {
-                createdAt: 'desc',
+                createdAt: 'asc',
               },
               select: {
                 id: true,

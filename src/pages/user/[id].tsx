@@ -16,7 +16,9 @@ import {
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next'
+import { unstable_getServerSession } from 'next-auth'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
@@ -29,21 +31,33 @@ import { User } from '@/models/users'
 import { UsersService } from '@/services/user'
 
 import giftImage from '../../../public/images/giftbox.png'
+import { authOptions } from '../api/auth/[...nextauth]'
 
 const UserDetails = () => {
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      signIn()
+    },
+  })
+
   const router = useRouter()
   const { id } = router.query
 
   const { t } = useTranslation(['common'])
 
-  const { data: user, isLoading } = useQuery(['user', id], () =>
-    UsersService.getUser(id as string),
+  const { data: user, isLoading } = useQuery(
+    ['user', id],
+    () => UsersService.getUser(id as string),
+    {
+      enabled: status === 'authenticated',
+    },
   )
 
-  if (router.isFallback || isLoading) {
+  if (isLoading) {
     return (
       <MainLayout>
-        <Progress isIndeterminate colorScheme="cyan" size="xs" />
+        <Progress isIndeterminate colorScheme="pink" size="xs" />
       </MainLayout>
     )
   }
@@ -73,7 +87,7 @@ const UserDetails = () => {
 
           <Box my={8}>
             <ListContainer>
-              {user.wishlists[0]?.items.map((item) => (
+              {user.wishlist.items.map((item) => (
                 <ListItem key={item.id}>
                   <VStack alignItems="flex-start">
                     <HStack alignItems="center" spacing={2}>
@@ -116,29 +130,22 @@ const UserDetails = () => {
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const users = await prisma.user.findMany({})
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const session = await unstable_getServerSession(req, res, authOptions)
 
-  const paths = users.map((user) => ({
-    params: { id: user.id },
-  }))
-
-  return {
-    paths,
-    fallback: true,
-  }
-}
-
-export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
-      ...(await serverSideTranslations(context.locale ?? 'pl', [
+      session,
+      ...(await serverSideTranslations(locale ?? 'pl', [
         'common',
         'forms',
         'users-search',
       ])),
     },
-    revalidate: 60,
   }
 }
 
