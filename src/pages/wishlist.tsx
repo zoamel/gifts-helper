@@ -186,17 +186,15 @@ const WishlistPage: NextPage = () => {
         <Box>
           <Divider colorScheme="red" my={6} />
 
-          {items && (
-            <ItemsList
-              items={items}
-              loadingItems={loadingItems}
-              onSelectItem={(item) => {
-                setSelectedItem(item)
-                onOpenEditModal()
-              }}
-              onDeleteItem={onInitializeDeleteItem}
-            />
-          )}
+          <ItemsList
+            items={items}
+            loadingItems={loadingItems}
+            onSelectItem={(item) => {
+              setSelectedItem(item)
+              onOpenEditModal()
+            }}
+            onDeleteItem={onInitializeDeleteItem}
+          />
         </Box>
       </MainLayout>
 

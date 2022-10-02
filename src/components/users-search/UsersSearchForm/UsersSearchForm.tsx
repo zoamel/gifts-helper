@@ -1,10 +1,10 @@
 import {
   Button,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   HStack,
   Input,
+  Text,
   chakra,
 } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
@@ -36,15 +36,8 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
 
   return (
     <chakra.form onSubmit={handleSubmit(onSubmit)} width="full" noValidate>
-      <HStack
-        spacing={2}
-        alignItems={!!errors.searchPhrase ? 'center' : 'flex-end'}
-      >
-        <FormControl
-          id="new-item-name"
-          isInvalid={!!errors.searchPhrase}
-          isRequired
-        >
+      <HStack spacing={2} alignItems={'flex-end'}>
+        <FormControl id="new-item-name" isRequired>
           <FormLabel>{t('users-search:searchFieldLabel')}</FormLabel>
           <Input
             autoComplete="autocomplete"
@@ -55,18 +48,15 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
             {...register('searchPhrase', {
               required: t('forms:fieldRequired') as string,
               minLength: {
-                value: 2,
-                message: t('forms:fieldMinLength', { value: 2 }),
+                value: 3,
+                message: t('forms:fieldMinLength', { value: 3 }),
               },
             })}
           />
-          <FormErrorMessage>
-            {errors.searchPhrase && errors.searchPhrase.message}
-          </FormErrorMessage>
         </FormControl>
         <Button
           mt={3}
-          colorScheme="cyan"
+          colorScheme="pink"
           type="submit"
           size="lg"
           disabled={requestInProgress}
@@ -74,6 +64,10 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
           {t('users-search:search')}
         </Button>
       </HStack>
+
+      {errors.searchPhrase && errors.searchPhrase.message && (
+        <Text color="red">{errors.searchPhrase.message}</Text>
+      )}
     </chakra.form>
   )
 }

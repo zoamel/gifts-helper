@@ -37,14 +37,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   wishlist      Wishlist?
+  followers     FriendsList[] @relation("following")
+  following     FriendsList[] @relation("follower")
 }
 
 model VerificationToken {
@@ -53,6 +55,16 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model FriendsList {
+  follower    User         @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User         @relation("following", fields: [followingId], references: [id])
+  followingId String
+  status      FollowStatus
+
+  @@id([followerId, followingId])
 }
 
 model Wishlist {
@@ -73,4 +85,10 @@ model Item {
   updatedAt   DateTime @updatedAt
   wishlist    Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
   wishlistId  String
+}
+
+enum FollowStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

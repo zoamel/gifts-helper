@@ -1,4 +1,8 @@
-import { MagnifyingGlassIcon, QueueListIcon } from '@heroicons/react/24/solid'
+import {
+  MagnifyingGlassIcon,
+  QueueListIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/solid'
 
 export const MENU_ITEMS = [
   {
@@ -11,14 +15,14 @@ export const MENU_ITEMS = [
   //   label: 'NIE WCHODZIĆ',
   //   icon: ViewListIcon,
   // },
-  // {
-  //   href: '/users-search',
-  //   label: 'otherUsers',
-  //   icon: MagnifyingGlassIcon,
-  // },
-  // {
-  //   href: '/following',
-  //   label: 'followedUsers',
-  //   icon: ViewListIcon,
-  // },
+  {
+    href: '/users-search',
+    label: 'otherUsers',
+    icon: MagnifyingGlassIcon,
+  },
+  {
+    href: '/following',
+    label: 'followedUsers',
+    icon: UserCircleIcon,
+  },
 ]

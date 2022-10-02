@@ -13,11 +13,35 @@ export default async function handle(
     res.status(401)
   }
 
-  // const { q } = req.query
+  const { query, method } = req
 
-  // const searchQuery = typeof q === 'string' ? q : q[0]
+  const search = query.query as string
 
-  const foundUsers = await prisma.user.findMany({})
+  switch (method) {
+    case 'GET':
+      console.log(search)
+      const foundUsers = await prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: search,
+              },
+            },
+            {
+              email: {
+                contains: search,
+              },
+            },
+          ],
+        },
+        take: 50,
+      })
 
-  res.send(foundUsers)
+      res.send(foundUsers)
+      break
+    default:
+      res.setHeader('Allow', ['GET', 'PUT'])
+      res.status(405).end(`Method ${method} Not Allowed`)
+  }
 }

@@ -21,7 +21,7 @@ import giftImage from '../../../../public/images/giftbox.png'
 import emptyStateImg from '../../../../public/images/no_data.svg'
 
 type Props = {
-  items: WishlistItem[]
+  items: WishlistItem[] | undefined
   loadingItems: boolean
   onSelectItem: (item: WishlistItem) => void
   onDeleteItem: (item: WishlistItem) => void
@@ -35,11 +35,12 @@ export const ItemsList = ({
 }: Props) => {
   const { t } = useTranslation(['common', 'wishlist'])
 
+  if (loadingItems || !items) {
+    return <Progress isIndeterminate colorScheme="pink" size="xs" my={1} />
+  }
+
   return (
     <>
-      {loadingItems && (
-        <Progress isIndeterminate colorScheme="pink" size="xs" my={1} />
-      )}
       <Stack as="ul" direction="column" spacing={4}>
         {items.map((item) => (
           <HStack

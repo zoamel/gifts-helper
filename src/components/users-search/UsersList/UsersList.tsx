@@ -2,19 +2,15 @@ import { Avatar, Button, HStack, Progress, Text } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
 import NextLink from 'next/link'
 
-import { User } from '../../../models/users'
-import { ListContainer, ListItem } from '../../ui'
+import { ListContainer, ListItem } from '@/components/ui'
+import { User } from '@/models/users'
 
 type Props = {
   users: User[]
-  requestInProgress: boolean
 }
-export const UsersList = ({ users, requestInProgress }: Props) => {
+export const UsersList = ({ users }: Props) => {
   const { t } = useTranslation(['users-search'])
 
-  if (requestInProgress) {
-    return <Progress isIndeterminate colorScheme="cyan" size="xs" mt={2} />
-  }
   return (
     <ListContainer mt={8}>
       {users.map((user) => (

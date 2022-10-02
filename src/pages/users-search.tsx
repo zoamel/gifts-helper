@@ -1,19 +1,21 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { Box, Text } from '@chakra-ui/react'
-import axios from 'axios'
-import type { NextPage } from 'next'
-import { GetStaticProps } from 'next'
+import { Box, Progress, Text } from '@chakra-ui/react'
+import { useQuery } from '@tanstack/react-query'
+import type { GetServerSideProps, NextPage } from 'next'
+import { unstable_getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-import { MainLayout } from '../components/ui'
-import { UsersList, UsersSearchForm } from '../components/users-search'
-import { User } from '../models/users'
+import { MainLayout } from '@/components/ui'
+import { UsersList, UsersSearchForm } from '@/components/users-search'
+import { UsersService } from '@/services/user'
+
+import { authOptions } from './api/auth/[...nextauth]'
 
 const UsersSearch: NextPage = () => {
-  const { status, data: session } = useSession({
+  const { status } = useSession({
     required: true,
     onUnauthenticated() {
       signIn()
@@ -22,86 +24,50 @@ const UsersSearch: NextPage = () => {
 
   const { t } = useTranslation()
 
-  const [fetchingUsers, setFetchingUsers] = useState(false)
-  const [foundUsers, setFoundUsers] = useState<User[]>([])
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
 
-  // async function searchForUsers(param: string) {
-  //   setFetchingUsers(true)
-  //
-  //   try {
-  //     const { data } = await axios.get<User[]>(`/api/users?q=${param}`)
-  //     setFoundUsers(data)
-  //     setFetchingUsers(false)
-  //     setErrorMessage(null)
-  //   } catch (error) {
-  //     let message = ''
-  //
-  //     if (axios.isAxiosError(error)) {
-  //       message = error.message
-  //     } else {
-  //       message = t('wishlist:requestErrorMessage')
-  //     }
-  //
-  //     setErrorMessage(message)
-  //     setFetchingUsers(false)
-  //   }
-  // }
-
-  async function getAllUsers() {
-    setFetchingUsers(true)
-
-    const param = 'all'
-
-    try {
-      const { data } = await axios.get<User[]>(`/api/users?q=${param}`)
-      const filteredData = data.filter(
-        (user) => user.email !== session?.user?.email,
-      )
-
-      setFoundUsers(filteredData)
-      setFetchingUsers(false)
-      setErrorMessage(null)
-    } catch (error) {
-      let message = ''
-
-      if (axios.isAxiosError(error)) {
-        message = error.message
-      } else {
-        message = t('wishlist:requestErrorMessage')
-      }
-
-      setErrorMessage(message)
-      setFetchingUsers(false)
-    }
-  }
-
-  React.useEffect(() => {
-    getAllUsers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const {
+    data: users,
+    fetchStatus,
+    isError,
+  } = useQuery(['usersSearch', query], () => UsersService.search(query), {
+    enabled: status === 'authenticated' && query.length > 0,
+  })
 
   return (
     <MainLayout>
-      {/*<UsersSearchForm*/}
-      {/*  onSearch={searchForUsers}*/}
-      {/*  requestInProgress={fetchingUsers}*/}
-      {/*/>*/}
+      <UsersSearchForm
+        onSearch={(query) => {
+          setQuery(query)
+        }}
+        requestInProgress={fetchStatus === 'fetching'}
+      />
 
-      {errorMessage && (
+      {fetchStatus === 'fetching' && (
+        <Progress isIndeterminate colorScheme="pink" size="xs" my={1} />
+      )}
+
+      {isError && (
         <Box my={4}>
-          <Text color="red">{errorMessage}</Text>
+          <Text color="red">{t('common:requestError')}</Text>
         </Box>
       )}
 
-      <UsersList users={foundUsers} requestInProgress={fetchingUsers} />
+      {users ? <UsersList users={users} /> : null}
     </MainLayout>
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const session = await unstable_getServerSession(req, res, authOptions)
+
   return {
     props: {
+      session,
       ...(await serverSideTranslations(locale ?? 'pl', [
         'common',
         'forms',
