@@ -42,9 +42,9 @@ const Following: NextPage = () => {
         </Box>
       )}
 
-      {users && users?.length > 0 ? (
-        <UsersList users={users} />
-      ) : (
+      {users ? <UsersList users={users} /> : null}
+
+      {users && users.length === 0 && (
         <Text size="2xl" textAlign="center">
           {t('users:notFollowingAnyone')}
         </Text>

@@ -1,0 +1,17 @@
+{
+  "newItemLabel": "Lägg till nytt objekt",
+  "newItemPlaceholder": "Till exempel: legoklossar",
+  "itemEditLabel": "Redigera detaljer",
+  "itemEditModalTitle": "Redigera objekt",
+  "itemDescriptionPlaceholder": "Ytterligare information om objektet (valfritt)",
+  "itemURLPlaceholder": "Varelänk (valfritt)",
+  "itemAddSuccessMessage": "Artikel har lagts till",
+  "itemUpdateSuccessMessage": "Artikel uppdaterad",
+  "itemDeleteSuccessMessage": "Objekt borttaget",
+  "requestErrorMessage": "Operationen misslyckades",
+  "deleteItemButtonLabel": "Ta bort objekt",
+  "deleteConfirmationTitle": "Ta bort objekt",
+  "deleteConfirmationDescription": "Är du säker på att du vill ta bort detta objekt från din lista?",
+  "urlButtonLabel": "Gå till länk",
+  "noItemsOnYourList": "Du har inga objekt i din lista ännu"
+}
