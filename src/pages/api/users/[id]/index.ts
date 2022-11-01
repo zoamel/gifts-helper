@@ -23,6 +23,15 @@ export default async function handle(
         id: userId as string,
       },
       include: {
+        followers: {
+          select: {
+            follower: {
+              select: {
+                email: true,
+              },
+            },
+          },
+        },
         wishlist: {
           select: {
             id: true,
@@ -46,6 +55,15 @@ export default async function handle(
       return res.status(404).send({ error: 'User Not Found' })
     }
 
-    res.send(foundUser)
+    const { followers, ...user } = foundUser
+
+    const isFollowedByAuthUser = followers.some((follower) => {
+      return follower.follower.email === session?.user?.email
+    })
+
+    res.send({
+      ...user,
+      isFollowedByAuthUser,
+    })
   }
 }

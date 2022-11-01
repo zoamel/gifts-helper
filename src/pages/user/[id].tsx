@@ -14,9 +14,8 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { GetServerSideProps } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslation } from 'next-i18next'
@@ -24,10 +23,9 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 
 import { ListContainer, ListItem, MainLayout } from '@/components/ui'
-import prisma from '@/lib/prisma'
-import { User } from '@/models/users'
 import { UsersService } from '@/services/user'
 
 import giftImage from '../../../public/images/giftbox.png'
@@ -41,10 +39,10 @@ const UserDetails = () => {
     },
   })
 
+  const queryClient = useQueryClient()
+  const { t } = useTranslation(['common'])
   const router = useRouter()
   const { id } = router.query
-
-  const { t } = useTranslation(['common'])
 
   const { data: user, isLoading } = useQuery(
     ['user', id],
@@ -53,6 +51,32 @@ const UserDetails = () => {
       enabled: status === 'authenticated',
     },
   )
+
+  const followUserMutation = useMutation(
+    () => UsersService.followUser(id as string),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries(['user', id])
+      },
+    },
+  )
+
+  const unfollowUserMutation = useMutation(
+    () => UsersService.unfollowUser(id as string),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries(['user', id])
+      },
+    },
+  )
+
+  function handleFollowUser() {
+    followUserMutation.mutate()
+  }
+
+  function handleUnfollowUser() {
+    unfollowUserMutation.mutate()
+  }
 
   if (isLoading) {
     return (
@@ -83,6 +107,25 @@ const UserDetails = () => {
             <Avatar name={user.name} src={user.image} />
             <Heading>{user.name}</Heading>
             <Box flex={1} />
+            {user.isFollowedByAuthUser ? (
+              <IconButton
+                colorScheme="pink"
+                icon={<AiFillEyeInvisible />}
+                fontSize="24px"
+                aria-label="unfollow this user"
+                onClick={handleUnfollowUser}
+                isLoading={unfollowUserMutation.isLoading}
+              />
+            ) : (
+              <IconButton
+                colorScheme="pink"
+                icon={<AiFillEye />}
+                fontSize="24px"
+                aria-label="follow this user"
+                onClick={handleFollowUser}
+                isLoading={followUserMutation.isLoading}
+              />
+            )}
           </HStack>
 
           <Box my={8}>

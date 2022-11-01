@@ -6,4 +6,5 @@ export type User = {
   email: string
   image: string
   wishlist: Wishlist
+  isFollowedByAuthUser?: boolean
 }

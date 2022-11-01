@@ -10,4 +10,12 @@ export const UsersService = {
     const { data } = await httpClient.get<User>(`/api/users/${id}`)
     return data
   },
+  async followUser(id: string) {
+    const { data } = await httpClient.post<User>(`/api/users/${id}/follow`)
+    return data
+  },
+  async unfollowUser(id: string) {
+    const { data } = await httpClient.delete<User>(`/api/users/${id}/follow`)
+    return data
+  },
 }
