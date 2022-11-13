@@ -18,6 +18,18 @@ export default async function handle(
 
     const userId = typeof id === 'string' ? id : id?.[0]
 
+    const authUser = await prisma.user.findUnique({
+      where: {
+        email: session?.user?.email as string,
+      },
+    })
+
+    if (authUser?.id === userId) {
+      return res.send({
+        isAuthUser: true,
+      })
+    }
+
     const foundUser = await prisma.user.findUnique({
       where: {
         id: userId as string,
@@ -44,6 +56,20 @@ export default async function handle(
                 name: true,
                 description: true,
                 url: true,
+                shoppingLists: {
+                  select: {
+                    shoppingList: {
+                      select: {
+                        owner: {
+                          select: {
+                            email: true,
+                          },
+                        },
+                      },
+                    },
+                    status: true,
+                  },
+                },
               },
             },
           },
@@ -61,9 +87,42 @@ export default async function handle(
       return follower.follower.email === session?.user?.email
     })
 
-    res.send({
+    let response = {
       ...user,
       isFollowedByAuthUser,
-    })
+    }
+
+    if (response.wishlist) {
+      response.wishlist.items = response.wishlist.items.map((item) => {
+        let additionalInfo = {
+          isBoughtByAuthUser: false,
+          isBought: false,
+        }
+
+        if (
+          item.shoppingLists.some(
+            (item) =>
+              item.shoppingList.owner.email === session?.user?.email &&
+              item.status === 'BOUGHT',
+          )
+        ) {
+          additionalInfo.isBoughtByAuthUser = true
+        } else if (
+          item.shoppingLists.some((item) => item.status === 'BOUGHT')
+        ) {
+          additionalInfo.isBought = true
+        }
+
+        // @ts-ignore
+        delete item.shoppingLists
+
+        return {
+          ...item,
+          ...additionalInfo,
+        }
+      })
+    }
+
+    res.send(response)
   }
 }

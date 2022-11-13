@@ -45,6 +45,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   wishlist      Wishlist?
+  shoppingList  ShoppingList?
   followers     FriendsList[] @relation("following")
   following     FriendsList[] @relation("follower")
 }
@@ -76,19 +77,44 @@ model Wishlist {
   items     Item[]
 }
 
+model ShoppingList {
+  id        String              @id @default(cuid())
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  owner     User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String              @unique
+  items     ShoppingListItems[]
+}
+
+model ShoppingListItems {
+  shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  shoppingListId String
+  item           Item         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId         String
+  status         ItemStatus   @default(RESERVED)
+
+  @@id([shoppingListId, itemId])
+}
+
 model Item {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  url         String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  wishlist    Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-  wishlistId  String
+  id            String              @id @default(cuid())
+  name          String
+  description   String?
+  url           String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  wishlist      Wishlist            @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  wishlistId    String
+  shoppingLists ShoppingListItems[]
 }
 
 enum FollowStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum ItemStatus {
+  RESERVED
+  BOUGHT
 }

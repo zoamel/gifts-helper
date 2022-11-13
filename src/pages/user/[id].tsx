@@ -1,9 +1,14 @@
+import { useState } from 'react'
+
 import {
   Avatar,
+  Badge,
   Box,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Button,
+  Flex,
   HStack,
   Heading,
   Icon,
@@ -26,13 +31,15 @@ import { useRouter } from 'next/router'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 
 import { ListContainer, ListItem, MainLayout } from '@/components/ui'
+import { ShoppingListItemStatus } from '@/models/wishlist'
+import { ItemsService } from '@/services/items'
 import { UsersService } from '@/services/user'
 
 import giftImage from '../../../public/images/giftbox.png'
 import { authOptions } from '../api/auth/[...nextauth]'
 
 const UserDetails = () => {
-  const { status } = useSession({
+  const { status, data: authUser } = useSession({
     required: true,
     onUnauthenticated() {
       signIn()
@@ -40,15 +47,20 @@ const UserDetails = () => {
   })
 
   const queryClient = useQueryClient()
-  const { t } = useTranslation(['common'])
+  const { t } = useTranslation(['common', 'items'])
   const router = useRouter()
   const { id } = router.query
+
+  const [itemInProgress, setItemInProgress] = useState<string | null>(null)
 
   const { data: user, isLoading } = useQuery(
     ['user', id],
     () => UsersService.getUser(id as string),
     {
       enabled: status === 'authenticated',
+      onSettled() {
+        setItemInProgress(null)
+      },
     },
   )
 
@@ -70,6 +82,37 @@ const UserDetails = () => {
     },
   )
 
+  const updateItemStatusMutation = useMutation(
+    (payload: { itemId: string; status: ShoppingListItemStatus }) =>
+      ItemsService.changeItemStatus(payload.itemId, payload.status),
+    {
+      onMutate(data) {
+        setItemInProgress(data.itemId)
+      },
+      onSuccess() {
+        queryClient.invalidateQueries(['user', id])
+      },
+      onError() {
+        setItemInProgress(null)
+      },
+    },
+  )
+
+  const removeItemFromShoppingListMutation = useMutation(
+    (itemId: string) => ItemsService.removeItemFromShoppingList(itemId),
+    {
+      onMutate(data) {
+        setItemInProgress(data)
+      },
+      onSuccess() {
+        queryClient.invalidateQueries(['user', id])
+      },
+      onError() {
+        setItemInProgress(null)
+      },
+    },
+  )
+
   function handleFollowUser() {
     followUserMutation.mutate()
   }
@@ -82,6 +125,15 @@ const UserDetails = () => {
     return (
       <MainLayout>
         <Progress isIndeterminate colorScheme="pink" size="xs" />
+      </MainLayout>
+    )
+  }
+
+  // @ts-ignore
+  if (user?.isAuthUser) {
+    return (
+      <MainLayout>
+        <Text>{t('items:youCannotViewYourOwnProfile')}</Text>
       </MainLayout>
     )
   }
@@ -131,8 +183,17 @@ const UserDetails = () => {
           <Box my={8}>
             <ListContainer>
               {user.wishlist.items.map((item) => (
-                <ListItem key={item.id}>
-                  <VStack alignItems="flex-start">
+                <ListItem
+                  key={item.id}
+                  sx={{
+                    background: () => {
+                      if (item.isBought) {
+                        return 'rgba(255, 0, 0, 0.1)'
+                      }
+                    },
+                  }}
+                >
+                  <VStack alignItems="flex-start" width="full">
                     <HStack alignItems="center" spacing={2}>
                       <Image
                         src={giftImage}
@@ -140,29 +201,67 @@ const UserDetails = () => {
                         height={20}
                         alt="present"
                       />
+
                       <Text fontSize="xl">{item.name}</Text>
+
+                      {item.isBoughtByAuthUser && (
+                        <Badge colorScheme="green">
+                          {t('items:boughtByYou')}
+                        </Badge>
+                      )}
+
+                      {item.isBought && (
+                        <Badge colorScheme="red">
+                          {t('items:boughtBySomeone')}
+                        </Badge>
+                      )}
                     </HStack>
 
-                    {item.description && (
-                      <Text fontSize="sm" color="gray.600">
-                        {item.description}
-                      </Text>
-                    )}
-                  </VStack>
+                    <Flex width="full">
+                      <HStack spacing={4}>
+                        {item.url && (
+                          <Link href={item.url} isExternal>
+                            <IconButton
+                              aria-label="link to user"
+                              colorScheme="blue"
+                              variant="outline"
+                              size="sm"
+                              icon={<Icon fontSize={20} as={LinkIcon} />}
+                            />
+                          </Link>
+                        )}
 
-                  <HStack spacing={4}>
-                    {item.url && (
-                      <Link href={item.url} isExternal>
-                        <IconButton
-                          aria-label="link to user"
-                          colorScheme="blue"
-                          variant="outline"
-                          size="sm"
-                          icon={<Icon fontSize={20} as={LinkIcon} />}
-                        />
-                      </Link>
-                    )}
-                  </HStack>
+                        {item.description && (
+                          <Text fontSize="sm" color="gray.600">
+                            {item.description}
+                          </Text>
+                        )}
+                      </HStack>
+
+                      <Box flex={1} />
+
+                      <Button
+                        size="sm"
+                        color="cyan.700"
+                        disabled={item.isBought}
+                        isLoading={itemInProgress === item.id}
+                        onClick={() => {
+                          !item.isBoughtByAuthUser
+                            ? updateItemStatusMutation.mutate({
+                                itemId: item.id!,
+                                status: ShoppingListItemStatus.BOUGHT,
+                              })
+                            : removeItemFromShoppingListMutation.mutate(
+                                item.id!,
+                              )
+                        }}
+                      >
+                        {item.isBoughtByAuthUser
+                          ? t('items:markAsNotBought')
+                          : t('items:markAsBought')}
+                      </Button>
+                    </Flex>
+                  </VStack>
                 </ListItem>
               ))}
             </ListContainer>
@@ -187,6 +286,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         'common',
         'forms',
         'users-search',
+        'items',
       ])),
     },
   }
