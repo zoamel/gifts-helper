@@ -73,6 +73,6 @@ export default async function handle(
       },
     })
 
-    res.status(204)
+    res.send({ message: 'Item removed from shopping list' })
   }
 }
