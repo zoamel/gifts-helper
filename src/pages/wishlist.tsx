@@ -183,8 +183,8 @@ const WishlistPage: NextPage = () => {
           />
         }
       >
-        <Box>
-          <Divider colorScheme="red" my={6} />
+        <Box py={6}>
+          <Divider colorScheme="red" />
 
           <ItemsList
             items={items}

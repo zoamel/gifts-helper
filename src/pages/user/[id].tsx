@@ -15,6 +15,7 @@ import {
   IconButton,
   Link,
   Progress,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react'
@@ -194,15 +195,21 @@ const UserDetails = () => {
                   }}
                 >
                   <VStack alignItems="flex-start" width="full">
-                    <HStack alignItems="center" spacing={2}>
-                      <Image
-                        src={giftImage}
-                        width={20}
-                        height={20}
-                        alt="present"
-                      />
+                    <Stack
+                      direction={['column', 'row']}
+                      alignItems="center"
+                      spacing={2}
+                    >
+                      <HStack spacing={2}>
+                        <Image
+                          src={giftImage}
+                          width={20}
+                          height={20}
+                          alt="present"
+                        />
 
-                      <Text fontSize="xl">{item.name}</Text>
+                        <Text fontSize="xl">{item.name}</Text>
+                      </HStack>
 
                       {item.isBoughtByAuthUser && (
                         <Badge colorScheme="green">
@@ -215,9 +222,14 @@ const UserDetails = () => {
                           {t('items:boughtBySomeone')}
                         </Badge>
                       )}
-                    </HStack>
+                    </Stack>
 
-                    <Flex width="full">
+                    <Flex
+                      width="full"
+                      direction={['column', 'row']}
+                      gap={[2, 0]}
+                      pb={[2, 0]}
+                    >
                       <HStack spacing={4}>
                         {item.url && (
                           <Link href={item.url} isExternal>
