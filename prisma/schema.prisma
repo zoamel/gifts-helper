@@ -98,9 +98,9 @@ model ShoppingListItems {
 
 model Item {
   id            String              @id @default(cuid())
-  name          String
-  description   String?
-  url           String?
+  name          String              @db.Text
+  description   String?             @db.Text
+  url           String?             @db.Text
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
   wishlist      Wishlist            @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
