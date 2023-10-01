@@ -1,0 +1,66 @@
+{
+  "Common": {
+    "appName": "Gifts Helper",
+    "wishlist": "Wishlist",
+    "shoppingList": "Shopping List",
+    "otherUsers": "Other users",
+    "itemName": "Item name",
+    "itemDescription": "Item description",
+    "itemURL": "Item URL",
+    "save": "Save",
+    "close": "Close",
+    "cancelAndClose": "Cancel and close",
+    "delete": "Delete",
+    "comingSoon": "This section will be available in the next version",
+    "followedUsers": "Followed users",
+    "addToFollowed": "Add to followed",
+    "stopFollowing": "Stop following",
+    "logout": "Logout",
+    "login": "Login",
+    "loginPageTitle": "Login",
+    "loginWithGoogle": "Login with Google",
+    "loginGreetings": "Login to use wishlists and shopping lists",
+    "checkingAuthState": "Checking authentication state",
+    "requestError": "An error occurred while sending the request"
+  },
+  "Forms": {
+    "fieldRequired": "Field required",
+    "fieldMinLength": "Minimum number of characters is: {{value}}",
+    "newItemSubmit": "Add",
+    "editItemSubmit": "Save",
+    "editItemCancel": "Cancel"
+  },
+  "Items": {
+    "markAsBought": "Mark as bought",
+    "markAsNotBought": "Mark as not bought",
+    "boughtBySomeone": "Bought by someone",
+    "boughtByYou": "Bought by you",
+    "youCannotViewYourOwnProfile": "You cannot follow your own profile"
+  },
+  "UsersSearch": {
+    "searchFieldLabel": "Search users",
+    "searchFieldPlaceholder": "Name and surname or email",
+    "search": "Search",
+    "visitProfile": "Visit profile"
+  },
+  "Users": {
+    "notFollowingAnyone": "You are not following anyone yet."
+  },
+  "Wishlist": {
+    "newItemLabel": "Add new item",
+    "newItemPlaceholder": "For example: Lego blocks",
+    "itemEditLabel": "Edit details",
+    "itemEditModalTitle": "Edit item",
+    "itemDescriptionPlaceholder": "Additional information about the item (optional)",
+    "itemURLPlaceholder": "Item URL (optional)",
+    "itemAddSuccessMessage": "Item added",
+    "itemUpdateSuccessMessage": "Item updated",
+    "itemDeleteSuccessMessage": "Item deleted",
+    "requestErrorMessage": "Operation failed",
+    "deleteItemButtonLabel": "Delete item",
+    "deleteConfirmationTitle": "Deleting Item",
+    "deleteConfirmationDescription": "Are you sure you want to delete this item from your list?",
+    "urlButtonLabel": "Go to link",
+    "noItemsOnYourList": "You don't have any items on your list yet"
+  }
+}

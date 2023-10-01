@@ -1,7 +1,0 @@
-{
-  "fieldRequired": "Pole wymagane",
-  "fieldMinLength": "Minimalna ilość znaków to: {{value}}",
-  "newItemSubmit": "Dodaj",
-  "editItemSubmit": "Zapisz",
-  "editItemCancel": "Anuluj"
-}

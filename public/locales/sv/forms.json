@@ -1,7 +1,0 @@
-{
-  "fieldRequired": "Obligatoriskt fält",
-  "fieldMinLength": "Minsta antal tecken är: {{value}}",
-  "newItemSubmit": "Lägg till",
-  "editItemSubmit": "Spara",
-  "editItemCancel": "Avbryt"
-}

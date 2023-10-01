@@ -1,8 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth'
 
 import prisma from '@/lib/prisma'
 import { WishlistItem } from '@/models/wishlist'
+
+import { authOptions } from '../auth/[...nextauth]'
 
 export default async function handle(
   req: NextApiRequest,
@@ -10,7 +12,7 @@ export default async function handle(
 ) {
   const item = req.body as WishlistItem
 
-  const session = await getSession({ req })
+  const session = await getServerSession(req, res, authOptions)
 
   if (session) {
     const wishlist = await prisma.wishlist.findFirstOrThrow({

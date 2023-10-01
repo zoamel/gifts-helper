@@ -17,10 +17,10 @@ import {
   VStack,
   chakra,
 } from '@chakra-ui/react'
+import { useTranslations } from 'next-intl'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 
-import { WishlistItem } from '../../../models/wishlist'
+import { WishlistItem } from '@/models/wishlist'
 
 type Props = {
   item: WishlistItem | null
@@ -39,7 +39,7 @@ export const ItemDetailsModal = ({
   onClose,
   onSave,
 }: Props) => {
-  const { t } = useTranslation(['common', 'wishlist'])
+  const t = useTranslations()
 
   const {
     handleSubmit,
@@ -72,20 +72,20 @@ export const ItemDetailsModal = ({
       <ModalOverlay />
 
       <ModalContent>
-        <ModalHeader>{t('wishlist:itemEditModalTitle')}</ModalHeader>
+        <ModalHeader>{t('Wishlist.itemEditModalTitle')}</ModalHeader>
         <ModalCloseButton />
 
         <chakra.form onSubmit={handleSubmit(onSubmit)} width="full" noValidate>
           <ModalBody>
             <VStack spacing={4}>
               <FormControl id="item-name" isInvalid={!!errors.name} isRequired>
-                <FormLabel>{t('itemName')}</FormLabel>
+                <FormLabel>{t('Common.itemName')}</FormLabel>
                 <Input
                   borderColor="cyan.600"
                   focusBorderColor="cyan.700"
-                  placeholder={t('wishlist:newItemPlaceholder')}
+                  placeholder={t('Wishlist.newItemPlaceholder')}
                   {...register('name', {
-                    required: t('forms:fieldRequired') as string,
+                    required: t('Forms.fieldRequired') as string,
                   })}
                 />
                 <FormErrorMessage>
@@ -94,21 +94,21 @@ export const ItemDetailsModal = ({
               </FormControl>
 
               <FormControl id="item-url">
-                <FormLabel>{t('itemURL')}</FormLabel>
+                <FormLabel>{t('Common.itemURL')}</FormLabel>
                 <Input
                   borderColor="cyan.600"
                   focusBorderColor="cyan.700"
-                  placeholder={t('wishlist:itemURLPlaceholder')}
+                  placeholder={t('Wishlist.itemURLPlaceholder')}
                   {...register('url')}
                 />
               </FormControl>
 
               <FormControl id="item-description">
-                <FormLabel>{t('itemDescription')}</FormLabel>
+                <FormLabel>{t('Common.itemDescription')}</FormLabel>
                 <Textarea
                   borderColor="cyan.600"
                   focusBorderColor="cyan.700"
-                  placeholder={t('wishlist:itemDescriptionPlaceholder')}
+                  placeholder={t('Wishlist.itemDescriptionPlaceholder')}
                   {...register('description')}
                 />
               </FormControl>
@@ -122,10 +122,10 @@ export const ItemDetailsModal = ({
               mr={3}
               isLoading={saveInProgress}
             >
-              {t('save')}
+              {t('Common.save')}
             </Button>
             <Button variant="ghost" onClick={onClose} disabled={saveInProgress}>
-              {t('cancelAndClose')}
+              {t('Common.cancelAndClose')}
             </Button>
           </ModalFooter>
         </chakra.form>

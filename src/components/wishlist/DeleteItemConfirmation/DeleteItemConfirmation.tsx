@@ -1,14 +1,15 @@
 import React from 'react'
+
 import {
   AlertDialog,
   AlertDialogBody,
+  AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogContent,
   AlertDialogOverlay,
   Button,
 } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 
 type Props = {
   isOpened: boolean
@@ -18,7 +19,7 @@ type Props = {
 
 const DeleteItemConfirmation = React.forwardRef<HTMLButtonElement, Props>(
   ({ isOpened, onCancel, onConfirm }: Props, ref) => {
-    const { t } = useTranslation(['common', 'wishlist'])
+    const t = useTranslations()
 
     return (
       <AlertDialog
@@ -30,26 +31,26 @@ const DeleteItemConfirmation = React.forwardRef<HTMLButtonElement, Props>(
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {t('wishlist:deleteConfirmationTitle')}
+              {t('Wishlist.deleteConfirmationTitle')}
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              {t('wishlist:deleteConfirmationDescription')}
+              {t('Wishlist.deleteConfirmationDescription')}
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button colorScheme="red" onClick={onConfirm}>
-                {t('delete')}
+                {t('Common.delete')}
               </Button>
               <Button ref={ref} onClick={onCancel} ml={4}>
-                {t('cancelAndClose')}
+                {t('Common.cancelAndClose')}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
     )
-  }
+  },
 )
 
 DeleteItemConfirmation.displayName = 'DeleteItemConfirmation'

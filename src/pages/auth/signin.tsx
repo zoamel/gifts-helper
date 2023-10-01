@@ -15,8 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { GetServerSideProps } from 'next'
 import { getProviders, signIn } from 'next-auth/react'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslations } from 'next-intl'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -35,7 +34,7 @@ export default function SignIn({ providers }: Props) {
   const { query } = useRouter()
   const callbackUrl = query.callbackUrl as string
 
-  const { t } = useTranslation('common')
+  const t = useTranslations('Common')
 
   return (
     <Box height="100vh">
@@ -113,7 +112,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'pl', ['common'])),
+      messages: (await import(`../../../messages/${locale}.json`)).default,
       providers,
     },
   }

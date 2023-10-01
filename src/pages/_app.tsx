@@ -1,52 +1,33 @@
-import React from 'react'
-
 import { ChakraProvider } from '@chakra-ui/react'
-import '@fontsource/open-sans/600.css'
-import '@fontsource/open-sans/700.css'
-import '@fontsource/raleway/400.css'
-import {
-  DehydratedState,
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
-import { appWithTranslation } from 'next-i18next'
+import { NextIntlClientProvider } from 'next-intl'
 import type { AppProps } from 'next/app'
 
 import theme from '../theme'
 
-function MyApp({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppProps<{
-  session: Session
-  dehydratedState?: DehydratedState
-}>) {
-  const [queryClient] = React.useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            refetchOnWindowFocus: false,
-          },
-        },
-      }),
-  )
+const queryClient = new QueryClient()
 
+type PageProps = {
+  messages: IntlMessages
+  session: Session
+}
+
+type Props = Omit<AppProps<PageProps>, 'pageProps'> & {
+  pageProps: PageProps
+}
+
+export default function MyApp({ Component, pageProps }: Props) {
   return (
-    <SessionProvider session={session}>
+    <NextIntlClientProvider messages={pageProps.messages}>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={pageProps.dehydratedState}>
+        <SessionProvider session={pageProps.session}>
           <ChakraProvider resetCSS theme={theme}>
             <Component {...pageProps} />
           </ChakraProvider>
-        </Hydrate>
+        </SessionProvider>
       </QueryClientProvider>
-    </SessionProvider>
+    </NextIntlClientProvider>
   )
 }
-
-// @ts-ignore
-export default appWithTranslation(MyApp)

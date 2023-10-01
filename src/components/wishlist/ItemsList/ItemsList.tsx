@@ -6,14 +6,13 @@ import {
   IconButton,
   Link,
   Progress,
-  Skeleton,
   Stack,
   Text,
   VStack,
 } from '@chakra-ui/react'
 import { LinkIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { useTranslation } from 'react-i18next'
 
 import { WishlistItem } from '@/models/wishlist'
 
@@ -33,7 +32,7 @@ export const ItemsList = ({
   onSelectItem,
   onDeleteItem,
 }: Props) => {
-  const { t } = useTranslation(['common', 'wishlist'])
+  const t = useTranslations()
 
   if (loadingItems || !items) {
     return <Progress isIndeterminate colorScheme="pink" size="xs" my={1} />
@@ -75,7 +74,7 @@ export const ItemsList = ({
               {item.url && (
                 <Link href={item.url} isExternal>
                   <IconButton
-                    aria-label={t('wishlist:urlButtonLabel')}
+                    aria-label={t('Wishlist.urlButtonLabel')}
                     colorScheme="blue"
                     variant="outline"
                     size="sm"
@@ -90,11 +89,11 @@ export const ItemsList = ({
                 colorScheme="cyan"
                 onClick={() => onSelectItem(item)}
               >
-                {t('wishlist:itemEditLabel')}
+                {t('Wishlist.itemEditLabel')}
               </Button>
 
               <IconButton
-                aria-label={t('wishlist:deleteItemButtonLabel')}
+                aria-label={t('Wishlist.deleteItemButtonLabel')}
                 colorScheme="red"
                 variant="outline"
                 size="sm"
@@ -108,7 +107,7 @@ export const ItemsList = ({
         {items.length === 0 && (
           <VStack spacing={8}>
             <Text color="blackAlpha.700" fontSize="xl">
-              {t('wishlist:noItemsOnYourList')}
+              {t('Wishlist.noItemsOnYourList')}
             </Text>
             <Box>
               <Image

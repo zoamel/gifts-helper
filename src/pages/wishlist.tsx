@@ -1,18 +1,11 @@
 import { useRef, useState } from 'react'
 
 import { Box, Divider, Text, useDisclosure, useToast } from '@chakra-ui/react'
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
-import axios from 'axios'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { GetServerSideProps, NextPage } from 'next'
 import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 
 import { MainLayout } from '@/components/ui'
 import {
@@ -21,13 +14,14 @@ import {
   ItemDetailsModal,
   ItemsList,
 } from '@/components/wishlist'
+import { wishlistKeys } from '@/constants/queryKeys'
 import { WishlistItem } from '@/models/wishlist'
 import { WishlistService } from '@/services/wishlist'
 
 import { authOptions } from './api/auth/[...nextauth]'
 
 const WishlistPage: NextPage = () => {
-  const { status } = useSession({
+  useSession({
     required: true,
     onUnauthenticated() {
       signIn()
@@ -36,7 +30,8 @@ const WishlistPage: NextPage = () => {
 
   const toast = useToast()
   const queryClient = useQueryClient()
-  const { t } = useTranslation(['common', 'wishlist'])
+  const t = useTranslations()
+
   const {
     isOpen: editModalOpened,
     onOpen: onOpenEditModal,
@@ -51,88 +46,71 @@ const WishlistPage: NextPage = () => {
     data: items,
     isLoading: loadingItems,
     isError,
-  } = useQuery(['wishlistItems'], WishlistService.getWishlistItems, {
-    enabled: status === 'authenticated',
+  } = useQuery({
+    queryKey: wishlistKeys.allWishlistItems,
+    queryFn: WishlistService.getWishlistItems,
   })
 
   const addItemMutation = useMutation(
-    (payload: WishlistItem) =>
-      axios.post<WishlistItem>('/api/wishlist/add-item', payload),
+    (payload: WishlistItem) => WishlistService.addNewWishlistItem(payload),
     {
       onError: (error) => {
         console.error(error)
 
         toast({
           status: 'error',
-          title: t('wishlist:requestErrorMessage'),
+          title: t('Wishlist.requestErrorMessage'),
         })
       },
       onSettled: () => {
-        queryClient.invalidateQueries(['wishlistItems'])
+        queryClient.invalidateQueries({
+          queryKey: wishlistKeys.allWishlistItems,
+        })
       },
     },
   )
 
   const updateItemMutation = useMutation(
-    (payload: WishlistItem) => {
-      const { id, ...item } = payload
-      return axios.patch<WishlistItem>(`/api/items/${id}`, item)
-    },
+    (payload: WishlistItem) => WishlistService.updateItem(payload),
     {
       onSuccess: () => {
         setSelectedItem(null)
         onCloseEditModal()
-        queryClient.invalidateQueries(['wishlistItems'])
+        queryClient.invalidateQueries(wishlistKeys.allWishlistItems)
 
         toast({
           status: 'success',
-          title: t('wishlist:itemUpdateSuccessMessage'),
+          title: t('Wishlist.itemUpdateSuccessMessage'),
           colorScheme: 'cyan',
         })
       },
-      onError: (error) => {
-        let message = ''
-
-        if (axios.isAxiosError(error)) {
-          message = error.message
-        } else {
-          message = t('wishlist:requestErrorMessage')
-        }
-
+      onError: () => {
         toast({
           status: 'error',
-          title: message,
+          title: t('Wishlist.requestErrorMessage'),
         })
       },
     },
   )
 
   const deleteItemMutation = useMutation(
-    (id: string) => axios.delete(`/api/items/${id}`),
+    (id: string) => WishlistService.deleteWishlistItem(id),
     {
       onSuccess() {
         setSelectedItem(null)
         setIsConfirmDeleteOpen(false)
-        queryClient.invalidateQueries(['wishlistItems'])
+        queryClient.invalidateQueries(wishlistKeys.allWishlistItems)
 
         toast({
           status: 'info',
-          title: t('wishlist:itemDeleteSuccessMessage'),
+          title: t('Wishlist.itemDeleteSuccessMessage'),
           colorScheme: 'cyan',
         })
       },
       onError(error) {
-        let message = ''
-
-        if (axios.isAxiosError(error)) {
-          message = error.message
-        } else {
-          message = t('wishlist:requestErrorMessage')
-        }
-
         toast({
           status: 'error',
-          title: message,
+          title: t('Wishlist.requestErrorMessage'),
         })
 
         setIsConfirmDeleteOpen(false)
@@ -165,7 +143,7 @@ const WishlistPage: NextPage = () => {
     return (
       <MainLayout>
         <Text colorScheme="red" textAlign="center">
-          {t('wishlist:requestErrorMessage')}
+          {t('Wishlist.requestErrorMessage')}
         </Text>
       </MainLayout>
     )
@@ -184,7 +162,7 @@ const WishlistPage: NextPage = () => {
         }
       >
         <Box py={6}>
-          <Divider colorScheme="red" />
+          <Divider />
 
           <ItemsList
             items={items}
@@ -221,25 +199,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  const queryClient = new QueryClient()
-
-  const session = await getServerSession(req, res, authOptions)
-
-  if (session) {
-    await queryClient.prefetchQuery(
-      ['wishlistItems'],
-      WishlistService.getWishlistItems,
-    )
-  }
-
   return {
     props: {
-      session,
-      ...(await serverSideTranslations(locale ?? 'pl', [
-        'common',
-        'wishlist',
-        'forms',
-      ])),
+      session: await getServerSession(req, res, authOptions),
+      messages: (await import(`../../messages/${locale}.json`)).default,
     },
   }
 }

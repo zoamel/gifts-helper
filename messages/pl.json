@@ -1,0 +1,66 @@
+{
+  "Common": {
+    "appName": "Pomocnik Prezentowy",
+    "wishlist": "Lista Życzeń",
+    "shoppingList": "Lista Zakupów",
+    "otherUsers": "Inni użytkownicy",
+    "itemName": "Nazwa przedmiotu",
+    "itemDescription": "Dodatkowy opis przedmiotu",
+    "itemURL": "Link do przedmiotu",
+    "save": "Zapisz",
+    "close": "Zamknij",
+    "cancelAndClose": "Anuluj i zamknij",
+    "delete": "Skasuj",
+    "comingSoon": "Sekcja będzie dostępna w kolejnej wersji",
+    "followedUsers": "Obserwowani",
+    "addToFollowed": "Dodaj do obserwowanych",
+    "stopFollowing": "Przestań obserwować",
+    "logout": "Wyloguj się",
+    "login": "Zaloguj się",
+    "loginPageTitle": "Logowanie",
+    "loginWithGoogle": "Zaloguj się przez Google",
+    "loginGreetings": "Zaloguj się aby korzystać z list życzeń i zakupów",
+    "checkingAuthState": "Sprawdzanie stanu zalogowania",
+    "requestError": "Wystąpił błąd podczas wysyłania żądania"
+  },
+  "Forms": {
+    "fieldRequired": "Pole wymagane",
+    "fieldMinLength": "Minimalna ilość znaków to: {{value}}",
+    "newItemSubmit": "Dodaj",
+    "editItemSubmit": "Zapisz",
+    "editItemCancel": "Anuluj"
+  },
+  "Items": {
+    "markAsBought": "Oznacz jako kupione",
+    "markAsNotBought": "Oznacz jako nie kupione",
+    "boughtBySomeone": "Kupione przez kogoś",
+    "boughtByYou": "Kupione przez Ciebie",
+    "youCannotViewYourOwnProfile": "Nie możesz obserwować swojego profilu"
+  },
+  "UsersSearch": {
+    "searchFieldLabel": "Szukaj użytkowników",
+    "searchFieldPlaceholder": "Imię i Nazwisko lub email",
+    "search": "Szukaj",
+    "visitProfile": "Zobacz profil"
+  },
+  "Users": {
+    "notFollowingAnyone": "Nie obserwujesz jeszcze nikogo."
+  },
+  "Wishlist": {
+    "newItemLabel": "Dodaj nowy przedmiot",
+    "newItemPlaceholder": "Przykładowo: Klocki Lego",
+    "itemEditLabel": "Edytuj detale",
+    "itemEditModalTitle": "Edycja przedmiotu",
+    "itemDescriptionPlaceholder": "Dodatkowe informacje na temat przedmiotu (opcjonalne)",
+    "itemURLPlaceholder": "Link do przedmiotu (opcjonalne)",
+    "itemAddSuccessMessage": "Dodano przedmiot",
+    "itemUpdateSuccessMessage": "Zaktualizowano przedmiot",
+    "itemDeleteSuccessMessage": "Usunięto przedmiot",
+    "requestErrorMessage": "Operacja nieuadana",
+    "deleteItemButtonLabel": "Usuń przedmiot",
+    "deleteConfirmationTitle": "Usuwanie Przedmiotu",
+    "deleteConfirmationDescription": "Czy na pewno chcesz usunąć ten przedmiot z Twojej listy?",
+    "urlButtonLabel": "Idź do linku",
+    "noItemsOnYourList": "Nie masz jeszcze przedmiotow na swojej liscie"
+  }
+}

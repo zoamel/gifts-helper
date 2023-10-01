@@ -4,6 +4,5 @@
   "trailingComma": "all",
   "importOrder": ["^react$", "^(?!^react$|^@/|^[./]).*", "^@/(.*)$", "^[./]"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
-  "importOrderParserPlugins": ["jsx", "typescript"]
+  "importOrderSortSpecifiers": true
 }

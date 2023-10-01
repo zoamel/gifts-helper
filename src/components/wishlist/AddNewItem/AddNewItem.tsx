@@ -8,7 +8,7 @@ import {
   Progress,
   chakra,
 } from '@chakra-ui/react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { WishlistItem } from '@/models/wishlist'
@@ -23,7 +23,7 @@ type FormInputs = {
 }
 
 export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
-  const { t } = useTranslation(['wishlist', 'forms'])
+  const t = useTranslations()
 
   const {
     handleSubmit,
@@ -57,14 +57,14 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
           isInvalid={!!errors.itemName}
           isRequired
         >
-          <FormLabel>{t('wishlist:newItemLabel')}</FormLabel>
+          <FormLabel>{t('Wishlist.newItemLabel')}</FormLabel>
           <Input
             size="lg"
             borderColor="cyan.600"
             focusBorderColor="cyan.700"
-            placeholder={t('wishlist:newItemPlaceholder')}
+            placeholder={t('Wishlist.newItemPlaceholder')}
             {...register('itemName', {
-              required: t('forms:fieldRequired') as string,
+              required: t('Forms.fieldRequired') as string,
             })}
           />
           <FormErrorMessage>
@@ -78,7 +78,7 @@ export const AddNewItem = ({ onAddNewItem, requestInProgress }: Props) => {
           size="lg"
           disabled={requestInProgress}
         >
-          {t('forms:newItemSubmit')}
+          {t('Forms.newItemSubmit')}
         </Button>
       </HStack>
 

@@ -1,6 +1,14 @@
 import { extendTheme } from '@chakra-ui/react'
+import { Open_Sans } from 'next/font/google'
 
-const fonts = { heading: 'Open Sans', body: 'Open Sans' }
+const openSans = Open_Sans({
+  subsets: ['latin'],
+})
+
+const fonts = {
+  heading: openSans.style.fontFamily,
+  body: openSans.style.fontFamily,
+}
 
 const theme = extendTheme({
   fonts,

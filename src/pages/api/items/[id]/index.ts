@@ -1,19 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth'
 
 import prisma from '@/lib/prisma'
+
+import { authOptions } from '../../auth/[...nextauth]'
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const session = await getSession({ req })
+  const session = await getServerSession(req, res, authOptions)
 
   if (!session) {
     res.status(401)
   }
 
-  if (req.method === 'PATCH') {
+  if (req.method === 'PUT') {
     const { id } = req.query
 
     const itemId = typeof id === 'string' ? id : id?.[0]
