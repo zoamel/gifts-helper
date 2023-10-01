@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next'
-import { unstable_getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'react-i18next'
@@ -223,7 +223,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const queryClient = new QueryClient()
 
-  const session = await unstable_getServerSession(req, res, authOptions)
+  const session = await getServerSession(req, res, authOptions)
 
   if (session) {
     await queryClient.prefetchQuery(

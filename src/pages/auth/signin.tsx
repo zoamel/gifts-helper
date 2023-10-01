@@ -71,8 +71,8 @@ export default function SignIn({ providers }: Props) {
           <Hide above="md">
             <Image
               src="/images/login_image.svg"
-              width="200px"
-              height="200px"
+              width={200}
+              height={200}
               alt="gift"
               priority
             />
