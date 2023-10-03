@@ -5,8 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import type { GetServerSideProps, NextPage } from 'next'
 import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslations } from 'next-intl'
 
 import { MainLayout } from '@/components/ui'
 import { UsersList, UsersSearchForm } from '@/components/users-search'
@@ -22,7 +21,7 @@ const UsersSearch: NextPage = () => {
     },
   })
 
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   const [query, setQuery] = useState('')
 
@@ -49,7 +48,13 @@ const UsersSearch: NextPage = () => {
 
       {isError && (
         <Box my={4}>
-          <Text color="red">{t('common:requestError')}</Text>
+          <Text color="red">{t('Common.requestError')}</Text>
+        </Box>
+      )}
+
+      {users?.length === 0 && (
+        <Box my={4}>
+          <Text>{t('UsersSearch.noResults')}</Text>
         </Box>
       )}
 
@@ -68,11 +73,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   return {
     props: {
       session,
-      ...(await serverSideTranslations(locale ?? 'pl', [
-        'common',
-        'forms',
-        'users-search',
-      ])),
+      messages: (await import(`../../messages/${locale}.json`)).default,
     },
   }
 }

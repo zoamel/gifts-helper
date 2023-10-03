@@ -25,7 +25,7 @@
   },
   "Forms": {
     "fieldRequired": "Pole wymagane",
-    "fieldMinLength": "Minimalna ilość znaków to: {{value}}",
+    "fieldMinLength": "Minimalna ilość znaków to: {value}",
     "newItemSubmit": "Dodaj",
     "editItemSubmit": "Zapisz",
     "editItemCancel": "Anuluj"
@@ -41,7 +41,8 @@
     "searchFieldLabel": "Szukaj użytkowników",
     "searchFieldPlaceholder": "Imię i Nazwisko lub email",
     "search": "Szukaj",
-    "visitProfile": "Zobacz profil"
+    "visitProfile": "Zobacz profil",
+    "noResults": "Nie znaleziono użytkowników spełniających kryteria wyszukiwania"
   },
   "Users": {
     "notFollowingAnyone": "Nie obserwujesz jeszcze nikogo."

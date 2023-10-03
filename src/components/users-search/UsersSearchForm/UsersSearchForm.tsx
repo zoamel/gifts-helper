@@ -7,7 +7,7 @@ import {
   Text,
   chakra,
 } from '@chakra-ui/react'
-import { useTranslation } from 'next-i18next'
+import { useTranslations } from 'next-intl'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 type Props = {
@@ -20,7 +20,7 @@ type FormInputs = {
 }
 
 export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
-  const { t } = useTranslation(['users-search', 'forms', 'common'])
+  const t = useTranslations()
 
   const {
     handleSubmit,
@@ -38,18 +38,18 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
     <chakra.form onSubmit={handleSubmit(onSubmit)} width="full" noValidate>
       <HStack spacing={2} alignItems={'flex-end'}>
         <FormControl id="new-item-name" isRequired>
-          <FormLabel>{t('users-search:searchFieldLabel')}</FormLabel>
+          <FormLabel>{t('UsersSearch.searchFieldLabel')}</FormLabel>
           <Input
             autoComplete="autocomplete"
             size="lg"
             borderColor="cyan.600"
             focusBorderColor="cyan.700"
-            placeholder={t('users-search:searchFieldPlaceholder')}
+            placeholder={t('UsersSearch.searchFieldPlaceholder')}
             {...register('searchPhrase', {
-              required: t('forms:fieldRequired') as string,
+              required: t('Forms.fieldRequired') as string,
               minLength: {
                 value: 3,
-                message: t('forms:fieldMinLength', { value: 3 }),
+                message: t('Forms.fieldMinLength', { value: 3 }),
               },
             })}
           />
@@ -61,7 +61,7 @@ export const UsersSearchForm = ({ onSearch, requestInProgress }: Props) => {
           size="lg"
           disabled={requestInProgress}
         >
-          {t('users-search:search')}
+          {t('UsersSearch.search')}
         </Button>
       </HStack>
 

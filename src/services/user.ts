@@ -3,23 +3,18 @@ import { User } from '@/models/users'
 
 export const UsersService = {
   async search(query: string) {
-    const { data } = await httpClient.get<User[]>(`/api/users?query=${query}`)
-    return data
+    return await httpClient.get(`/api/users?query=${query}`).json<User[]>()
   },
   async getUser(id: string) {
-    const { data } = await httpClient.get<User>(`/api/users/${id}`)
-    return data
+    return await httpClient.get(`/api/users/${id}`).json<User>()
   },
   async followUser(id: string) {
-    const { data } = await httpClient.post<User>(`/api/users/${id}/follow`)
-    return data
+    return await httpClient.post(`/api/users/${id}/follow`).json<User>()
   },
   async unfollowUser(id: string) {
-    const { data } = await httpClient.delete<User>(`/api/users/${id}/follow`)
-    return data
+    return await httpClient.delete(`/api/users/${id}/follow`).json<User>()
   },
   async getUsersFollowedByMe() {
-    const { data } = await httpClient.get<User[]>(`/api/users/followed`)
-    return data
+    return await httpClient.get(`/api/users/following`).json<User[]>()
   },
 }

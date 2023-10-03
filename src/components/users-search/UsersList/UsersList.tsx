@@ -1,6 +1,4 @@
-import { Avatar, Button, HStack, Progress, Text } from '@chakra-ui/react'
-import { useTranslation } from 'next-i18next'
-import NextLink from 'next/link'
+import { Avatar, HStack, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
 import { ListContainer, ListItem } from '@/components/ui'
@@ -10,8 +8,6 @@ type Props = {
   users: User[]
 }
 export const UsersList = ({ users }: Props) => {
-  const { t } = useTranslation(['users-search'])
-
   const router = useRouter()
 
   return (

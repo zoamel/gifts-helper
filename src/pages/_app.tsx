@@ -7,7 +7,14 @@ import type { AppProps } from 'next/app'
 
 import theme from '../theme'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+})
 
 type PageProps = {
   messages: IntlMessages

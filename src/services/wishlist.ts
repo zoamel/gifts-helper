@@ -1,13 +1,12 @@
-import ky from 'ky'
-
+import { httpClient } from '@/lib/httpClient'
 import { WishlistItem } from '@/models/wishlist'
 
 export const WishlistService = {
   async getWishlistItems() {
-    return await ky.get('/api/wishlist').json<WishlistItem[]>()
+    return await httpClient.get('/api/wishlist').json<WishlistItem[]>()
   },
   async addNewWishlistItem(payload: WishlistItem) {
-    return ky
+    return httpClient
       .post('/api/wishlist/add-item', {
         json: payload,
       })
@@ -16,13 +15,13 @@ export const WishlistService = {
   async updateItem(payload: WishlistItem) {
     const { id, ...item } = payload
 
-    return ky
+    return httpClient
       .put(`/api/items/${id}`, {
         json: item,
       })
       .json<WishlistItem>()
   },
   async deleteWishlistItem(id: string) {
-    return ky.delete(`/api/items/${id}`).json()
+    return httpClient.delete(`/api/items/${id}`).json()
   },
 }

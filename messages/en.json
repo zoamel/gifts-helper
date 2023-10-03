@@ -41,7 +41,8 @@
     "searchFieldLabel": "Search users",
     "searchFieldPlaceholder": "Name and surname or email",
     "search": "Search",
-    "visitProfile": "Visit profile"
+    "visitProfile": "Visit profile",
+    "noResults": "No users found matching the search criteria"
   },
   "Users": {
     "notFollowingAnyone": "You are not following anyone yet."

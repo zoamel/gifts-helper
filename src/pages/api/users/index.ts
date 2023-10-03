@@ -19,7 +19,6 @@ export default async function handle(
 
   switch (method) {
     case 'GET':
-      console.log(search)
       const foundUsers = await prisma.user.findMany({
         where: {
           OR: [

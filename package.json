@@ -24,6 +24,7 @@
     "focus-visible": "^5.2.0",
     "framer-motion": "^10.16.4",
     "ky": "^1.0.1",
+    "ky-universal": "^0.12.0",
     "next": "^13.5.3",
     "next-auth": "^4.23.1",
     "next-intl": "^2.20.2",

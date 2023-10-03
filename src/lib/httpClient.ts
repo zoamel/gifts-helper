@@ -1,5 +1,5 @@
-import axios from 'axios'
+import ky from 'ky'
 
-let axiosInstance = axios.create()
+const kyInstance = ky.extend({})
 
-export const httpClient = axiosInstance
+export const httpClient = kyInstance
