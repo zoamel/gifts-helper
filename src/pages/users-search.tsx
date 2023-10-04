@@ -3,15 +3,12 @@ import { useState } from 'react'
 import { Box, Progress, Text } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import type { GetServerSideProps, NextPage } from 'next'
-import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 
 import { MainLayout } from '@/components/ui'
 import { UsersList, UsersSearchForm } from '@/components/users-search'
 import { UsersService } from '@/services/user'
-
-import { authOptions } from './api/auth/[...nextauth]'
 
 const UsersSearch: NextPage = () => {
   const { status } = useSession({
@@ -63,16 +60,9 @@ const UsersSearch: NextPage = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const session = await getServerSession(req, res, authOptions)
-
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
-      session,
       messages: (await import(`../../messages/${locale}.json`)).default,
     },
   }

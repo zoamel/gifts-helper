@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 
 import prisma from '@/lib/prisma'
 import { WishlistItem } from '@/models/wishlist'

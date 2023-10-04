@@ -22,10 +22,8 @@ import {
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { GetServerSideProps } from 'next'
-import { getServerSession } from 'next-auth'
 import { signIn, useSession } from 'next-auth/react'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -37,18 +35,17 @@ import { ItemsService } from '@/services/items'
 import { UsersService } from '@/services/user'
 
 import giftImage from '../../../public/images/giftbox.png'
-import { authOptions } from '../api/auth/[...nextauth]'
 
 const UserDetails = () => {
-  const { status, data: authUser } = useSession({
+  const { status } = useSession({
     required: true,
     onUnauthenticated() {
       signIn()
     },
   })
 
+  const t = useTranslations()
   const queryClient = useQueryClient()
-  const { t } = useTranslation(['common', 'items'])
   const router = useRouter()
   const { id } = router.query
 
@@ -134,7 +131,7 @@ const UserDetails = () => {
   if (user?.isAuthUser) {
     return (
       <MainLayout>
-        <Text>{t('items:youCannotViewYourOwnProfile')}</Text>
+        <Text>{t('Items.youCannotViewYourOwnProfile')}</Text>
       </MainLayout>
     )
   }
@@ -145,7 +142,7 @@ const UserDetails = () => {
         <Breadcrumb fontWeight="medium" fontSize="md">
           <BreadcrumbItem>
             <NextLink href="/users-search" passHref>
-              <BreadcrumbLink>{t('otherUsers')}</BreadcrumbLink>
+              <BreadcrumbLink>{t('Common.otherUsers')}</BreadcrumbLink>
             </NextLink>
           </BreadcrumbItem>
           <BreadcrumbItem isCurrentPage>
@@ -213,13 +210,13 @@ const UserDetails = () => {
 
                       {item.isBoughtByAuthUser && (
                         <Badge colorScheme="green">
-                          {t('items:boughtByYou')}
+                          {t('Items.boughtByYou')}
                         </Badge>
                       )}
 
                       {item.isBought && (
                         <Badge colorScheme="red">
-                          {t('items:boughtBySomeone')}
+                          {t('Items.boughtBySomeone')}
                         </Badge>
                       )}
                     </Stack>
@@ -269,8 +266,8 @@ const UserDetails = () => {
                         }}
                       >
                         {item.isBoughtByAuthUser
-                          ? t('items:markAsNotBought')
-                          : t('items:markAsBought')}
+                          ? t('Items.markAsNotBought')
+                          : t('Items.markAsBought')}
                       </Button>
                     </Flex>
                   </VStack>
@@ -284,22 +281,10 @@ const UserDetails = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const session = await getServerSession(req, res, authOptions)
-
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
-      session,
-      ...(await serverSideTranslations(locale ?? 'pl', [
-        'common',
-        'forms',
-        'users-search',
-        'items',
-      ])),
+      messages: (await import(`../../../messages/${locale}.json`)).default,
     },
   }
 }

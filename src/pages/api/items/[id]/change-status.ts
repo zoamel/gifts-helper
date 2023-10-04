@@ -1,13 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth/next'
 
 import prisma from '@/lib/prisma'
+
+import { authOptions } from '../../auth/[...nextauth]'
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const session = await getSession({ req })
+  const session = await getServerSession(req, res, authOptions)
 
   if (!session) {
     res.status(401)
@@ -31,24 +33,30 @@ export default async function handle(
       },
     })
 
+    let shoppingListId: string
+
     if (!userShoppingList) {
-      await prisma.shoppingList.create({
+      const newShoppingList = await prisma.shoppingList.create({
         data: {
           ownerId: authUser!.id,
         },
       })
+
+      shoppingListId = newShoppingList.id
+    } else {
+      shoppingListId = userShoppingList.id
     }
 
     const response = await prisma.shoppingListItems.upsert({
       where: {
         shoppingListId_itemId: {
-          shoppingListId: userShoppingList!.id,
+          shoppingListId,
           itemId: itemId!,
         },
       },
       create: {
         itemId: itemId!,
-        shoppingListId: userShoppingList!.id,
+        shoppingListId,
         status: status! as 'RESERVED' | 'BOUGHT',
       },
       update: {

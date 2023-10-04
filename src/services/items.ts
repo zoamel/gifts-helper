@@ -6,11 +6,13 @@ export const ItemsService = {
     const response = await httpClient.patch(
       `/api/items/${itemId}/change-status`,
       {
-        status,
+        json: {
+          status,
+        },
       },
     )
 
-    return response.data
+    return response
   },
 
   async removeItemFromShoppingList(itemId: string) {
@@ -18,6 +20,6 @@ export const ItemsService = {
       `/api/items/${itemId}/change-status`,
     )
 
-    return response.data
+    return response
   },
 }
