@@ -15,6 +15,6 @@ export const UsersService = {
     return await httpClient.delete(`/api/users/${id}/follow`).json<User>()
   },
   async getUsersFollowedByMe() {
-    return await httpClient.get(`/api/users/following`).json<User[]>()
+    return await httpClient.get(`/api/users/followed`).json<User[]>()
   },
 }

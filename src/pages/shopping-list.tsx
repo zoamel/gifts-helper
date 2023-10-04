@@ -1,20 +1,19 @@
+import { Box, Heading, VStack } from '@chakra-ui/react'
 import type { GetStaticProps, NextPage } from 'next'
-import { Heading, Box, VStack } from '@chakra-ui/react'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'react-i18next'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 
-import { MainLayout } from '../components/ui'
 import underConstructionImage from '../../public/images/under_construction.svg'
+import { MainLayout } from '../components/ui'
 
 const ShoppingList: NextPage = () => {
-  const { t } = useTranslation('common')
+  const t = useTranslations()
 
   return (
     <MainLayout>
       <VStack pt={4} spacing={6}>
         <Heading size="lg" color="gray.600">
-          {t('comingSoon')}
+          {t('Common.comingSoon')}
         </Heading>
 
         <Box>
@@ -28,7 +27,7 @@ const ShoppingList: NextPage = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'pl', ['common'])),
+      messages: (await import(`../../messages/${locale}.json`)).default,
     },
   }
 }
