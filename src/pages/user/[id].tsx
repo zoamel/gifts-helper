@@ -1,12 +1,12 @@
 import { useState } from 'react'
 
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Avatar,
   Badge,
   Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   Flex,
   HStack,
@@ -25,10 +25,9 @@ import { GetServerSideProps } from 'next'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 
+import { FollowButton } from '@/components/followers'
 import { ListContainer, ListItem, MainLayout } from '@/components/ui'
 import { ShoppingListItemStatus } from '@/models/wishlist'
 import { ItemsService } from '@/services/items'
@@ -138,18 +137,15 @@ const UserDetails = () => {
 
   return (
     <MainLayout>
-      <Box mb={6} pb={3} borderBottomWidth="2px" borderBottomStyle="dashed">
+      {/* <Box mb={6} pb={3} borderBottomWidth="2px" borderBottomStyle="dashed">
         <Breadcrumb fontWeight="medium" fontSize="md">
           <BreadcrumbItem>
             <NextLink href="/users-search" passHref>
-              <BreadcrumbLink>{t('Common.otherUsers')}</BreadcrumbLink>
+              {t('Common.goBack')}
             </NextLink>
           </BreadcrumbItem>
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink>{user?.name}</BreadcrumbLink>
-          </BreadcrumbItem>
         </Breadcrumb>
-      </Box>
+      </Box> */}
 
       {user && (
         <>
@@ -157,28 +153,27 @@ const UserDetails = () => {
             <Avatar name={user.name} src={user.image} />
             <Heading>{user.name}</Heading>
             <Box flex={1} />
-            {user.isFollowedByAuthUser ? (
-              <IconButton
-                colorScheme="pink"
-                icon={<AiFillEyeInvisible />}
-                fontSize="24px"
-                aria-label="unfollow this user"
-                onClick={handleUnfollowUser}
-                isLoading={unfollowUserMutation.isLoading}
-              />
-            ) : (
-              <IconButton
-                colorScheme="pink"
-                icon={<AiFillEye />}
-                fontSize="24px"
-                aria-label="follow this user"
-                onClick={handleFollowUser}
-                isLoading={followUserMutation.isLoading}
-              />
-            )}
+
+            <FollowButton
+              followingStatus={user.followingStatus}
+              isFollowedByAuthUser={user.isFollowedByAuthUser!}
+              requestInProgress={
+                followUserMutation.isLoading || unfollowUserMutation.isLoading
+              }
+              onFollowUser={handleFollowUser}
+              onUnfollowUser={handleUnfollowUser}
+              onCancelFollowRequest={() => {}}
+            />
           </HStack>
 
           <Box my={8}>
+            {user.wishlist.visibility === 'PRIVATE' &&
+              user.followingStatus !== 'ACCEPTED' && (
+                <Alert status="info">
+                  <AlertIcon />
+                  <AlertTitle>{t('Common.userWishlistIsPrivate')}</AlertTitle>
+                </Alert>
+              )}
             <ListContainer>
               {user.wishlist.items.map((item) => (
                 <ListItem

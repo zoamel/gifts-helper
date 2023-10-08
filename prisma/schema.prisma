@@ -68,12 +68,13 @@ model FriendsList {
 }
 
 model Wishlist {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId   String   @unique
-  items     Item[]
+  id         String                  @id @default(cuid())
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  owner      User                    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId    String                  @unique
+  items      Item[]
+  visibility WishlistVisiblityStatus @default(PRIVATE)
 }
 
 model ShoppingList {
@@ -105,6 +106,11 @@ model Item {
   wishlist      Wishlist            @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
   wishlistId    String
   shoppingLists ShoppingListItems[]
+}
+
+enum WishlistVisiblityStatus {
+  PUBLIC
+  PRIVATE
 }
 
 enum FollowStatus {

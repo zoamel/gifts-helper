@@ -1,3 +1,4 @@
+import { Wishlist } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth/next'
 
@@ -44,11 +45,13 @@ export default async function handle(
                 email: true,
               },
             },
+            status: true,
           },
         },
         wishlist: {
           select: {
             id: true,
+            visibility: true,
             items: {
               orderBy: {
                 createdAt: 'asc',
@@ -89,9 +92,28 @@ export default async function handle(
       return follower.follower.email === session?.user?.email
     })
 
+    const followingStatus = followers.find((follower) => {
+      return follower.follower.email === session?.user?.email
+    })?.status
+
     let response = {
-      ...user,
+      id: user.id,
+      name: user.name,
+      image: user.image,
+      wishlist: user.wishlist,
       isFollowedByAuthUser,
+      followingStatus,
+    }
+
+    if (
+      user.wishlist?.visibility === 'PRIVATE' &&
+      followingStatus !== 'ACCEPTED'
+    ) {
+      response.wishlist = {
+        id: user.wishlist.id,
+        visibility: user.wishlist.visibility,
+        items: [],
+      }
     }
 
     if (response.wishlist) {

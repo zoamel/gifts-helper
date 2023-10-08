@@ -16,4 +16,5 @@ export type Wishlist = {
   id: string
   name: string
   items: WishlistItem[]
+  visibility: 'PUBLIC' | 'PRIVATE'
 }

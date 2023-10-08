@@ -47,7 +47,7 @@ export default async function handle(
       },
       data: {
         followers: {
-          create: [{ followerId: authUser?.id as string, status: 'ACCEPTED' }],
+          create: [{ followerId: authUser?.id as string, status: 'PENDING' }],
         },
       },
     })

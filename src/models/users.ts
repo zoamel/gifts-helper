@@ -1,3 +1,4 @@
+import { FollowingStatus } from './followers'
 import { Wishlist } from './wishlist'
 
 export type User = {
@@ -7,4 +8,5 @@ export type User = {
   image: string
   wishlist: Wishlist
   isFollowedByAuthUser?: boolean
+  followingStatus: FollowingStatus
 }
