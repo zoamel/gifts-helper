@@ -39,8 +39,6 @@ const Following: NextPage = () => {
     enabled: status === 'authenticated',
   })
 
-  console.log(users)
-
   return (
     <MainLayout>
       {fetchStatus === 'fetching' && (

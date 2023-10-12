@@ -4,6 +4,7 @@
     "wishlist": "Wishlist",
     "shoppingList": "Shopping List",
     "otherUsers": "Other users",
+    "pendingInvites": "Pending invites",
     "itemName": "Item name",
     "itemDescription": "Item description",
     "itemURL": "Item URL",
@@ -70,6 +71,9 @@
   },
   "FriendsList": {
     "pending": "Waiting for acceptance",
-    "rejected": "Invitation rejected"
+    "rejected": "Invitation rejected",
+    "accept": "Accept",
+    "reject": "Reject",
+    "noPendingInvites": "You don't have any pending invites"
   }
 }

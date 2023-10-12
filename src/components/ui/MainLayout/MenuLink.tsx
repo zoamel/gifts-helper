@@ -1,17 +1,18 @@
 import React from 'react'
 
 import { HStack, Icon, Link, Text } from '@chakra-ui/react'
+import { useTranslations } from 'next-intl'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { useTranslations } from 'next-intl'
 
 type Props = {
   href: string
   label: string
   icon: any
+  isNotification?: boolean
 }
 
-export const MenuLink = ({ href, label, icon }: Props) => {
+export const MenuLink = ({ href, label, icon, isNotification }: Props) => {
   const router = useRouter()
   const isActive = router.pathname === href
 
@@ -32,7 +33,13 @@ export const MenuLink = ({ href, label, icon }: Props) => {
       textDecoration="none"
       width="100%"
       bg={isActive ? 'cyan.700' : 'inherit'}
-      color={isActive ? 'white' : 'black'}
+      color={
+        isActive
+          ? 'white'
+          : label === 'pendingInvites' && isNotification
+          ? 'red.600'
+          : 'black'
+      }
       _hover={{
         color: 'white',
         bg: 'cyan.700',
@@ -40,7 +47,13 @@ export const MenuLink = ({ href, label, icon }: Props) => {
     >
       <HStack alignItems="center">
         <Icon h={4} w={4} as={icon} color="inherit" />
-        <Text fontSize="md" color="inherit">
+        <Text
+          fontSize="md"
+          color="inherit"
+          fontWeight={
+            label === 'pendingInvites' && isNotification ? 'semibold' : 'normal'
+          }
+        >
           {/* @ts-ignore */}
           {t(label)}
         </Text>

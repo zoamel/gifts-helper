@@ -41,7 +41,7 @@ export const UsersList = ({ users }: Props) => {
 
   return (
     <>
-      <ListContainer mt={8}>
+      <ListContainer mb={8}>
         {users.accepted.map((user) => (
           <ListItem
             key={user.id}
@@ -58,41 +58,49 @@ export const UsersList = ({ users }: Props) => {
         ))}
       </ListContainer>
 
-      <Heading size="md">{t('pending')}</Heading>
-      <ListContainer mt={2} mb={8}>
-        {users.pending.map((user) => (
-          <ListItem
-            key={user.id}
-            justifyContent="space-between"
-            alignItems="center"
-            cursor="pointer"
-            onClick={() => router.push(`/user/${user.id}`)}
-          >
-            <HStack spacing={2} alignItems="center">
-              <Avatar name={user.name} src={user.image} size="md" />
-              <Text fontSize="xl">{user.name}</Text>
-            </HStack>
-          </ListItem>
-        ))}
-      </ListContainer>
+      {users.pending.length > 0 && (
+        <>
+          <Heading size="md">{t('pending')}</Heading>
+          <ListContainer mt={2} mb={8}>
+            {users.pending.map((user) => (
+              <ListItem
+                key={user.id}
+                justifyContent="space-between"
+                alignItems="center"
+                cursor="pointer"
+                onClick={() => router.push(`/user/${user.id}`)}
+              >
+                <HStack spacing={2} alignItems="center">
+                  <Avatar name={user.name} src={user.image} size="md" />
+                  <Text fontSize="xl">{user.name}</Text>
+                </HStack>
+              </ListItem>
+            ))}
+          </ListContainer>
+        </>
+      )}
 
-      <Heading size="md">{t('rejected')}</Heading>
-      <ListContainer mt={8}>
-        {users.rejected.map((user) => (
-          <ListItem
-            key={user.id}
-            justifyContent="space-between"
-            alignItems="center"
-            cursor="pointer"
-            onClick={() => router.push(`/user/${user.id}`)}
-          >
-            <HStack spacing={2} alignItems="center">
-              <Avatar name={user.name} src={user.image} size="md" />
-              <Text fontSize="xl">{user.name}</Text>
-            </HStack>
-          </ListItem>
-        ))}
-      </ListContainer>
+      {users.rejected.length > 0 && (
+        <>
+          <Heading size="md">{t('rejected')}</Heading>
+          <ListContainer mt={8}>
+            {users.rejected.map((user) => (
+              <ListItem
+                key={user.id}
+                justifyContent="space-between"
+                alignItems="center"
+                cursor="pointer"
+                onClick={() => router.push(`/user/${user.id}`)}
+              >
+                <HStack spacing={2} alignItems="center">
+                  <Avatar name={user.name} src={user.image} size="md" />
+                  <Text fontSize="xl">{user.name}</Text>
+                </HStack>
+              </ListItem>
+            ))}
+          </ListContainer>
+        </>
+      )}
     </>
   )
 }

@@ -24,7 +24,7 @@ export const FollowButton = ({
   if (!isFollowedByAuthUser) {
     return (
       <Button
-        colorScheme="pink"
+        colorScheme="cyan"
         onClick={onFollowUser}
         isLoading={requestInProgress}
         size="sm"
@@ -44,7 +44,7 @@ export const FollowButton = ({
 
   if (isFollowedByAuthUser && followingStatus === 'REJECTED') {
     return (
-      <Button variant="ghost" colorScheme="red" isDisabled size="sm">
+      <Button variant="ghost" colorScheme="pink" isDisabled size="sm">
         {t('Common.invitationRejected')}
       </Button>
     )
@@ -53,10 +53,11 @@ export const FollowButton = ({
   if (isFollowedByAuthUser && followingStatus === 'ACCEPTED') {
     return (
       <Button
-        colorScheme="red"
+        colorScheme="pink"
         onClick={onUnfollowUser}
         isLoading={requestInProgress}
         size="sm"
+        variant="ghost"
       >
         {t('Common.stopFollowing')}
       </Button>

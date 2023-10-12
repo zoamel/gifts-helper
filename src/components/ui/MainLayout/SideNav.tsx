@@ -4,6 +4,8 @@ import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 
+import { useGetPendingFriendsInvites } from '@/hooks/useGetPendingFriendsInvites'
+
 import { AppLogo } from './AppLogo'
 import { MenuLink } from './MenuLink'
 import { MENU_ITEMS } from './constants'
@@ -12,6 +14,8 @@ export const SideNav = () => {
   const t = useTranslations('Common')
 
   const { data: sessionData, status } = useSession()
+
+  const { data } = useGetPendingFriendsInvites()
 
   return (
     <Box
@@ -39,12 +43,19 @@ export const SideNav = () => {
           {sessionData?.user ? (
             <>
               <VStack pb={6} alignItems="stretch" spacing={4}>
-                {MENU_ITEMS.map((menuItem) => (
+                {MENU_ITEMS.filter((item) => {
+                  if (item.label === 'pendingInvites') {
+                    return data && data.length > 0
+                  }
+
+                  return true
+                }).map((menuItem) => (
                   <MenuLink
                     key={menuItem.label}
                     href={menuItem.href}
                     label={menuItem.label}
                     icon={menuItem.icon}
+                    isNotification={data && data.length > 0}
                   />
                 ))}
               </VStack>

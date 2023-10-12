@@ -1,4 +1,5 @@
 import {
+  ExclamationCircleIcon,
   MagnifyingGlassIcon,
   QueueListIcon,
   UserCircleIcon,
@@ -24,5 +25,10 @@ export const MENU_ITEMS = [
     href: '/following',
     label: 'followedUsers',
     icon: UserCircleIcon,
+  },
+  {
+    href: '/pending-invites',
+    label: 'pendingInvites',
+    icon: ExclamationCircleIcon,
   },
 ]

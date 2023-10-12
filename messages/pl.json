@@ -4,6 +4,7 @@
     "wishlist": "Lista Życzeń",
     "shoppingList": "Lista Zakupów",
     "otherUsers": "Inni użytkownicy",
+    "pendingInvites": "Oczekujące zaproszenia",
     "itemName": "Nazwa przedmiotu",
     "itemDescription": "Dodatkowy opis przedmiotu",
     "itemURL": "Link do przedmiotu",
@@ -71,6 +72,9 @@
   },
   "FriendsList": {
     "pending": "Oczekuje na akceptację",
-    "rejected": "Zaproszenie odrzucone"
+    "rejected": "Zaproszenie odrzucone",
+    "accept": "Akceptuj",
+    "reject": "Odrzuć",
+    "noPendingInvites": "Nie masz oczekujących zaproszeń"
   }
 }
