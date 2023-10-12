@@ -16,21 +16,73 @@ export default async function handle(
   }
 
   if (req.method === 'GET') {
-    const foundUsers = await prisma.user.findMany({
+    const pendingFollowed = await prisma.user.findMany({
       where: {
         followers: {
           some: {
+            status: 'PENDING',
             follower: {
               email: session?.user?.email as string,
             },
           },
         },
       },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
       orderBy: {
         name: 'asc',
       },
     })
 
-    res.send(foundUsers)
+    const acceptedFollowed = await prisma.user.findMany({
+      where: {
+        followers: {
+          some: {
+            status: 'ACCEPTED',
+            follower: {
+              email: session?.user?.email as string,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    })
+
+    const rejectedFollowed = await prisma.user.findMany({
+      where: {
+        followers: {
+          some: {
+            status: 'REJECTED',
+            follower: {
+              email: session?.user?.email as string,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    })
+
+    res.send({
+      pending: pendingFollowed,
+      accepted: acceptedFollowed,
+      rejected: rejectedFollowed,
+    })
   }
 }

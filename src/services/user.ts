@@ -1,4 +1,5 @@
 import { httpClient } from '@/lib/httpClient'
+import { FollowListUser } from '@/models/followers'
 import { User } from '@/models/users'
 
 export const UsersService = {
@@ -15,6 +16,10 @@ export const UsersService = {
     return await httpClient.delete(`/api/users/${id}/follow`).json<User>()
   },
   async getUsersFollowedByMe() {
-    return await httpClient.get(`/api/users/followed`).json<User[]>()
+    return await httpClient.get(`/api/users/followed`).json<{
+      accepted: FollowListUser[]
+      pending: FollowListUser[]
+      rejected: FollowListUser[]
+    }>()
   },
 }

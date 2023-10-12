@@ -6,7 +6,20 @@ import { useTranslations } from 'next-intl'
 
 import { MainLayout } from '@/components/ui'
 import { UsersList } from '@/components/users-search'
+import { FollowListUser } from '@/models/followers'
 import { UsersService } from '@/services/user'
+
+function noUserIsFollowed(users: {
+  accepted: FollowListUser[]
+  pending: FollowListUser[]
+  rejected: FollowListUser[]
+}) {
+  return (
+    users.accepted.length === 0 &&
+    users.pending.length === 0 &&
+    users.rejected.length === 0
+  )
+}
 
 const Following: NextPage = () => {
   const { status } = useSession({
@@ -26,6 +39,8 @@ const Following: NextPage = () => {
     enabled: status === 'authenticated',
   })
 
+  console.log(users)
+
   return (
     <MainLayout>
       {fetchStatus === 'fetching' && (
@@ -38,9 +53,9 @@ const Following: NextPage = () => {
         </Box>
       )}
 
-      {users ? <UsersList users={users} /> : null}
+      {users && !noUserIsFollowed(users) ? <UsersList users={users} /> : null}
 
-      {users && users.length === 0 && (
+      {users && noUserIsFollowed(users) && (
         <Text size="2xl" textAlign="center">
           {t('Users.notFollowingAnyone')}
         </Text>

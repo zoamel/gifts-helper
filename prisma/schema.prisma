@@ -65,6 +65,7 @@ model FriendsList {
   status      FollowStatus
 
   @@id([followerId, followingId])
+  @@index([status])
 }
 
 model Wishlist {

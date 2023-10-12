@@ -67,5 +67,9 @@
     "deleteConfirmationDescription": "Are you sure you want to delete this item from your list?",
     "urlButtonLabel": "Go to link",
     "noItemsOnYourList": "You don't have any items on your list yet"
+  },
+  "FriendsList": {
+    "pending": "Waiting for acceptance",
+    "rejected": "Invitation rejected"
   }
 }
