@@ -149,7 +149,7 @@ const UserDetails = () => {
 
       {user && (
         <>
-          <HStack alignItems="center" spacing={3}>
+          <Stack direction={['column', 'row']} alignItems="center" spacing={3}>
             <Avatar name={user.name} src={user.image} />
             <Heading>{user.name}</Heading>
             <Box flex={1} />
@@ -164,7 +164,7 @@ const UserDetails = () => {
               onUnfollowUser={handleUnfollowUser}
               onCancelFollowRequest={() => {}}
             />
-          </HStack>
+          </Stack>
 
           <Box my={8}>
             {user.wishlist.visibility === 'PRIVATE' &&
